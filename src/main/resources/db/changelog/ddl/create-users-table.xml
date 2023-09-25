@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="20230920_create_users_table" author="kyrios">
+        <createTable tableName="users">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" unique="true"></constraints>
+            </column>
+            <column name="username" type="VARCHAR(255)"></column>
+            <column name="email" type="VARCHAR(255)"></column>
+            <column name="password" type="VARCHAR(255)"></column>
+            <column name="created_by" type="VARCHAR(255)"></column>
+            <column name="created_date" type="DATETIME"></column>
+            <column name="last_modified_by" type="VARCHAR(255)"></column>
+            <column name="last_modified_date" type="DATETIME"></column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
