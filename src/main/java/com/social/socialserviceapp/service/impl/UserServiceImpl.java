@@ -12,7 +12,6 @@ import com.social.socialserviceapp.repository.UserRepository;
 import com.social.socialserviceapp.repository.common.BaseRepository;
 import com.social.socialserviceapp.service.UserService;
 import com.social.socialserviceapp.service.common.BaseService;
-import com.social.socialserviceapp.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +51,7 @@ public class UserServiceImpl extends BaseService<User, UserRequestDTO> implement
     protected void validate(UserRequestDTO requestDTO) throws SocialAppException{
         List<User> userList = userRepository.findConflictByEmail(requestDTO.getEmail());
         if (!userList.isEmpty()) {
-            throw new SocialAppException(Constants.RESPONSE_CODE.SUCCESS, "Error: Email is already in use!!!");
+//            throw new SocialAppException(Constants.RESPONSE_CODE.SUCCESS, "Error: Email is already in use!!!");
         }
     }
 
@@ -60,7 +59,7 @@ public class UserServiceImpl extends BaseService<User, UserRequestDTO> implement
     protected User customBeforeSave(UserRequestDTO requestDTO){
         User user = userMapper.convertRequestDTOToUser(requestDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role = roleRepository.findByRoleName(RoleName.USER)
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
                 .orElse(null);
         HashSet<Role> roles = new HashSet<>();
         roles.add(role);

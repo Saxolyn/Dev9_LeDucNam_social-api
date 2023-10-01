@@ -3,8 +3,9 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
-
     <changeSet id="20230923_insert_roles_data" author="kyrios">
-        <loadData file="db/changelog/dml/role_names.csv" tableName="roles"/>
+        <loadData file="db/changelog/dml/user.csv" tableName="users"/>
+        <loadData file="db/changelog/dml/role.csv" tableName="roles"/>
+        <loadData file="db/changelog/dml/user_role.csv" tableName="users_roles"/>
     </changeSet>
 </databaseChangeLog>

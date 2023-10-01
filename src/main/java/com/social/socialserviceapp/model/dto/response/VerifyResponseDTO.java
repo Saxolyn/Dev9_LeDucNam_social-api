@@ -7,4 +7,5 @@ public class VerifyResponseDTO {
 
     private String username;
     private String token;
+
 }

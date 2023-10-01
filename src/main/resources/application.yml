@@ -10,9 +10,18 @@ spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
+
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+  #Redis properties
   redis:
     host: localhost
     port: 6379
-
+#JWT properties
+social:
+  jwt:
+    header:
+      value: Authorization
+      prefix: Bearer
+    secret: kyrios
+    expiration: 3600000

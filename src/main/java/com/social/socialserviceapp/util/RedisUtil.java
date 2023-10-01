@@ -4,7 +4,6 @@ import com.social.socialserviceapp.exception.SocialAppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -25,7 +24,7 @@ public class RedisUtil {
                     .set(key, String.valueOf(value));
             redisTemplate.expire(key, timeExpired, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            throw new SocialAppException("Error while saving to cache", e.getMessage());
+//            throw new SocialAppException("Error while saving to cache", e.getMessage());
         }
     }
 
@@ -39,7 +38,8 @@ public class RedisUtil {
                 return Optional.empty();
             }
         } catch (Exception e) {
-            throw new SocialAppException("Error while retrieving from the cache ", e.getMessage());
+//            throw new SocialAppException("Error while retrieving from the cache ", e.getMessage());
+            throw new SocialAppException("Error while retrieving from the cache ");
         }
     }
 
@@ -47,7 +47,7 @@ public class RedisUtil {
         try {
             redisTemplate.delete(key);
         } catch (Exception e) {
-            throw new SocialAppException(HttpStatus.INTERNAL_SERVER_ERROR.name(),
+            throw new SocialAppException(
                     "Error while removing from the cache");
         }
     }

@@ -1,6 +1,6 @@
 package com.social.socialserviceapp.model.enums;
 
 public enum RoleName {
-    USER,
-    ADMIN
+    ROLE_USER,
+    ROLE_ADMIN
 }

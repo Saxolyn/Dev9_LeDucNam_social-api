@@ -9,4 +9,5 @@ import org.springframework.stereotype.Service;
 public interface UserService {
 
     public UserResponseDTO register(UserRequestDTO requestDTO) throws SocialAppException, Exception;
+
 }
