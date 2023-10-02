@@ -21,5 +21,7 @@ public class Constants {
     public static class RESPONSE_MESSAGE {
         public static final String INVALID_OTP = "Invalid otp";
         public static final String OTP_EXPIRED = "Otp expired";
+        public static final String RESET_PASSWORD_SUCCESS = "Reset password successfully.";
+        public static final String USER_NOT_FOUND = "User not found";
     }
 }

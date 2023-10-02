@@ -47,7 +47,7 @@ public class OtpServiceImpl implements OtpService {
     private UserDetailsService userDetailsService;
 
     @Override
-    public int generateOTP() throws SocialAppException {
+    public int generateOTP() throws SocialAppException{
         int otp = 0;
         try {
             Random random = SecureRandom.getInstance(DEFAULT_ALGORITHM);
@@ -60,7 +60,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public LoginResponseDTO sendOTP(LoginRequestDTO requestDTO) throws SocialAppException {
+    public Response sendOTP(LoginRequestDTO requestDTO) throws SocialAppException{
         try {
             int otp = this.generateOTP();
             Authentication authentication = authenticationManager.authenticate(
@@ -70,7 +70,10 @@ public class OtpServiceImpl implements OtpService {
             if (authentication.isAuthenticated()) {
                 log.info("Otp: {}", otp);
                 redisUtil.setValue(requestDTO.getUsername(), otp);
-                return LoginResponseDTO.builder().otp(otp).build();
+                return Response.success("The OTP is only valid for 30s")
+                        .withData(LoginResponseDTO.builder()
+                                .otp(otp)
+                                .build());
             }
         } catch (AuthenticationException e) {
             throw new BadCredentialsException("Invalid username or password");
@@ -79,7 +82,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public VerifyResponseDTO verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException {
+    public Response verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException{
         Optional<String> cachedOtp = redisUtil.getValue(requestDTO.getUsername());
         if (cachedOtp.isPresent() && cachedOtp.get()
                 .equals(requestDTO.getOtp())) {
@@ -87,12 +90,13 @@ public class OtpServiceImpl implements OtpService {
             redisUtil.remove(requestDTO.getUsername());
             CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
                     requestDTO.getUsername());
-            log.info("Logged in User returned [API]: " + customUserDetails.getUsername());
+            log.info("Logged in User returned [API]: {}", customUserDetails.getUsername());
             String token = jwtTokenProvider.createToken(customUserDetails);
             VerifyResponseDTO responseDTO = new VerifyResponseDTO();
             responseDTO.setUsername(requestDTO.getUsername());
             responseDTO.setToken(token);
-            return responseDTO;
+            return Response.success()
+                    .withData(responseDTO);
         } else if (cachedOtp.isPresent() && !cachedOtp.get()
                 .equals(requestDTO.getOtp())) {
             log.error(Constants.RESPONSE_MESSAGE.OTP_EXPIRED);

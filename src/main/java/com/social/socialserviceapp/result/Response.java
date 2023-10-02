@@ -19,6 +19,9 @@ public class Response {
     private String cause;
     private String path;
 
+    public Response(){
+    }
+
     public Response(String type, int status, String message, Object data, String cause, String path){
         this.timestamp = Instant.now()
                 .toString();
@@ -30,17 +33,23 @@ public class Response {
         this.path = path;
     }
 
-    public Response() {
-    }
-
     public Response(Object data, String cause, String path){
         this.data = data;
         this.cause = cause;
         this.path = path;
     }
 
+    public Response(String type, int status){
+        this.type = type;
+        this.status = status;
+    }
+
     public static Response success(String message){
         return new Response(Constants.RESPONSE_TYPE.SUCCESS, HttpStatus.OK.value(), message, null, null, null);
+    }
+
+    public static Response success(){
+        return new Response(Constants.RESPONSE_TYPE.SUCCESS, HttpStatus.OK.value());
     }
 
     //    public Response(String type, String code, String message, Object data){

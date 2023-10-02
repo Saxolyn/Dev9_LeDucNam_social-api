@@ -1,19 +1,14 @@
 package com.social.socialserviceapp.controller;
 
-import com.social.socialserviceapp.model.dto.request.LoginRequestDTO;
-import com.social.socialserviceapp.model.dto.request.UserRequestDTO;
-import com.social.socialserviceapp.model.dto.request.VerifyRequestDTO;
+import com.social.socialserviceapp.model.dto.request.*;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.OtpService;
 import com.social.socialserviceapp.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,27 +18,40 @@ import javax.validation.Valid;
 @Tag(name = "Auth", description = "The Auth API. Nothing more!!!.")
 public class AuthController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private OtpService otpService;
 
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    public AuthController(UserService userService, OtpService otpService){
+        this.userService = userService;
+        this.otpService = otpService;
+    }
+
     @PostMapping("/register")
-    public Response register(@Valid @RequestBody
-                             UserRequestDTO requestDTO) throws Exception {
-        return Response.success("User registered successfully!!!")
-                .withData(userService.register(requestDTO));
+    public Response register(@Valid @RequestBody UserRequestDTO requestDTO) throws Exception{
+        return userService.register(requestDTO);
     }
 
     @PostMapping(value = "/login")
-    public Response login(@RequestBody LoginRequestDTO requestDTO) {
-        return Response.success("The OTP is only valid for 30s")
-                .withData(otpService.sendOTP(requestDTO));
+    public Response login(@RequestBody LoginRequestDTO requestDTO){
+        return otpService.sendOTP(requestDTO);
     }
 
     @PostMapping("/verify-otp")
-    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO) {
-        return Response.success(null).withData(otpService.verifyOtp(requestDTO));
+    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO){
+        return otpService.verifyOtp(requestDTO);
     }
+
+    @PostMapping("/forgot-password")
+    public Response forgotPassword(@RequestBody ForgotPasswordRequestDTO requestDTO){
+        return userService.forgotPassword(requestDTO);
+    }
+
+    @PutMapping("/reset-password")
+    public Response resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
+        return userService.resetPassword(resetPasswordRequestDTO);
+    }
+
 }
