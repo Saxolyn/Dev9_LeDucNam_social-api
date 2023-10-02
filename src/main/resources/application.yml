@@ -10,7 +10,7 @@ spring:
         format_sql: true
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
-
+  #Liquibase properties
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
   #Redis properties

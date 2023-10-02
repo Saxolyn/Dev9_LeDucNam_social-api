@@ -1,11 +1,14 @@
 package com.social.socialserviceapp.service.impl;
 
+import com.social.socialserviceapp.exception.ExpiredOtpException;
 import com.social.socialserviceapp.exception.InvalidOtpException;
 import com.social.socialserviceapp.exception.SocialAppException;
 import com.social.socialserviceapp.model.CustomUserDetails;
 import com.social.socialserviceapp.model.dto.request.LoginRequestDTO;
 import com.social.socialserviceapp.model.dto.request.VerifyRequestDTO;
+import com.social.socialserviceapp.model.dto.response.LoginResponseDTO;
 import com.social.socialserviceapp.model.dto.response.VerifyResponseDTO;
+import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.security.JwtTokenProvider;
 import com.social.socialserviceapp.service.OtpService;
 import com.social.socialserviceapp.util.Constants;
@@ -13,8 +16,10 @@ import com.social.socialserviceapp.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -42,7 +47,7 @@ public class OtpServiceImpl implements OtpService {
     private UserDetailsService userDetailsService;
 
     @Override
-    public int generateOTP() throws SocialAppException{
+    public int generateOTP() throws SocialAppException {
         int otp = 0;
         try {
             Random random = SecureRandom.getInstance(DEFAULT_ALGORITHM);
@@ -55,21 +60,26 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public int sendOTP(LoginRequestDTO requestDTO) throws SocialAppException{
-        int otp = this.generateOTP();
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(requestDTO.getUsername(), requestDTO.getPassword()));
-        SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
-        if (authentication.isAuthenticated()) {
-            log.info("Otp: {}", otp);
-            redisUtil.setValue(requestDTO.getUsername(), otp);
+    public LoginResponseDTO sendOTP(LoginRequestDTO requestDTO) throws SocialAppException {
+        try {
+            int otp = this.generateOTP();
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestDTO.getUsername(), requestDTO.getPassword()));
+            SecurityContextHolder.getContext()
+                    .setAuthentication(authentication);
+            if (authentication.isAuthenticated()) {
+                log.info("Otp: {}", otp);
+                redisUtil.setValue(requestDTO.getUsername(), otp);
+                return LoginResponseDTO.builder().otp(otp).build();
+            }
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid username or password");
         }
-        return otp;
+        return null;
     }
 
     @Override
-    public VerifyResponseDTO verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException{
+    public VerifyResponseDTO verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException {
         Optional<String> cachedOtp = redisUtil.getValue(requestDTO.getUsername());
         if (cachedOtp.isPresent() && cachedOtp.get()
                 .equals(requestDTO.getOtp())) {
@@ -85,7 +95,8 @@ public class OtpServiceImpl implements OtpService {
             return responseDTO;
         } else if (cachedOtp.isPresent() && !cachedOtp.get()
                 .equals(requestDTO.getOtp())) {
-            throw new SocialAppException(Constants.RESPONSE_MESSAGE.OTP_EXPIRED);
+            log.error(Constants.RESPONSE_MESSAGE.OTP_EXPIRED);
+            throw new ExpiredOtpException(Constants.RESPONSE_MESSAGE.OTP_EXPIRED);
         } else {
             log.error(Constants.RESPONSE_MESSAGE.INVALID_OTP);
             throw new InvalidOtpException(Constants.RESPONSE_MESSAGE.INVALID_OTP.concat("!!!"));

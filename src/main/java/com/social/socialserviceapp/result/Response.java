@@ -10,7 +10,7 @@ import java.time.Instant;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Response<T> {
+public class Response {
     private String timestamp;
     private String type;
     private int status;
@@ -30,8 +30,7 @@ public class Response<T> {
         this.path = path;
     }
 
-    public Response(){
-
+    public Response() {
     }
 
     public Response(Object data, String cause, String path){
