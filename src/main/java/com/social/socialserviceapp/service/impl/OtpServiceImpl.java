@@ -23,31 +23,34 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Optional;
 import java.util.Random;
 
+@Transactional
 @Service
 @Slf4j
 public class OtpServiceImpl implements OtpService {
     private static final String DEFAULT_ALGORITHM = "SHA1PRNG";
-
-    @Autowired
     private RedisUtil redisUtil;
-
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    public OtpServiceImpl(RedisUtil redisUtil, AuthenticationManager authenticationManager,
+                          JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+        this.redisUtil = redisUtil;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userDetailsService = userDetailsService;
+    }
+
     @Override
-    public int generateOTP() throws SocialAppException{
+    public int generateOTP() throws SocialAppException {
         int otp = 0;
         try {
             Random random = SecureRandom.getInstance(DEFAULT_ALGORITHM);
@@ -60,7 +63,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public Response sendOTP(LoginRequestDTO requestDTO) throws SocialAppException{
+    public Response sendOTP(LoginRequestDTO requestDTO) throws SocialAppException {
         try {
             int otp = this.generateOTP();
             Authentication authentication = authenticationManager.authenticate(
@@ -82,7 +85,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public Response verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException{
+    public Response verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException {
         Optional<String> cachedOtp = redisUtil.getValue(requestDTO.getUsername());
         if (cachedOtp.isPresent() && cachedOtp.get()
                 .equals(requestDTO.getOtp())) {

@@ -27,8 +27,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-@Service
 @Transactional
+@Service
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private UserMapper userMapper;
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder,
                            RoleRepository roleRepository, UserDetailsService userDetailsService,
-                           JwtTokenProvider jwtTokenProvider){
+                           JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -50,34 +50,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response register(UserRequestDTO requestDTO){
+    public Response register(UserRequestDTO requestDTO) {
         User user = userMapper.convertRequestDTOToUser(requestDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
-                .orElse(null);
+        Role role = roleRepository.findByRoleName(RoleName.ROLE_USER).orElse(null);
         HashSet<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
         userRepository.save(user);
-        return Response.success("User registered successfully!!!")
-                .withData(userMapper.convertUserToUserResponseDTO(user));
+        return Response.success("User registered successfully!!!").withData(userMapper.convertUserToUserResponseDTO(user));
     }
 
     @Override
-    public Response forgotPassword(ForgotPasswordRequestDTO requestDTO){
-        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
-                requestDTO.getUsername());
-        return Response.success()
-                .withData(ForgotPasswordResponseDTO.builder()
-                        .token(jwtTokenProvider.createToken(customUserDetails))
-                        .build());
+    public Response forgotPassword(ForgotPasswordRequestDTO requestDTO) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(requestDTO.getUsername());
+        return Response.success().withData(ForgotPasswordResponseDTO.builder().token(jwtTokenProvider.createToken(customUserDetails)).build());
     }
 
     @Override
-    public Response resetPassword(ResetPasswordRequestDTO requestDTO){
+    public Response resetPassword(ResetPasswordRequestDTO requestDTO) {
         String username = jwtTokenProvider.getUsernameFromJWT(requestDTO.getToken());
         try {
-            Optional<User> user = userRepository.findByUsername(username);
+            Optional<User> user = this.findUserByUsername(username);
             user.ifPresent(u -> {
                 u.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
                 userRepository.save(u);
@@ -89,7 +83,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public void validate(UserRequestDTO requestDTO) throws SocialAppException{
+    @Override
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public void validate(UserRequestDTO requestDTO) throws SocialAppException {
         List<User> userList = userRepository.findConflictByEmail(requestDTO.getEmail());
         if (!userList.isEmpty()) {
 //            throw new SocialAppException(Constants.RESPONSE_CODE.SUCCESS, "Error: Email is already in use!!!");

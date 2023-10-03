@@ -23,5 +23,7 @@ public class Constants {
         public static final String OTP_EXPIRED = "Otp expired";
         public static final String RESET_PASSWORD_SUCCESS = "Reset password successfully.";
         public static final String USER_NOT_FOUND = "User not found";
+
+        public static final String MODEL_MAPPER_ERROR = "ModelMapper mapping errors";
     }
 }

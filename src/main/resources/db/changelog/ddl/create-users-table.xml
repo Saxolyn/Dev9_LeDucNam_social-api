@@ -7,15 +7,15 @@
     <changeSet id="20230920_create_users_table" author="kyrios">
         <createTable tableName="users">
             <column name="id" type="BIGINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" unique="true"></constraints>
+                <constraints primaryKey="true" nullable="false" unique="true"/>
             </column>
-            <column name="username" type="VARCHAR(255)"></column>
-            <column name="email" type="VARCHAR(255)"></column>
-            <column name="password" type="VARCHAR(255)"></column>
-            <column name="created_by" type="VARCHAR(255)"></column>
-            <column name="created_date" type="DATETIME"></column>
-            <column name="last_modified_by" type="VARCHAR(255)"></column>
-            <column name="last_modified_date" type="DATETIME"></column>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="created_date" type="DATETIME"/>
+            <column name="last_modified_by" type="VARCHAR(255)"/>
+            <column name="last_modified_date" type="DATETIME"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

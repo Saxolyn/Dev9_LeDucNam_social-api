@@ -3,10 +3,11 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
-    <include file="db/changelog/ddl/create-users-table.xml"></include>
-    <include file="db/changelog/ddl/create-roles-table.xml"></include>
-    <include file="db/changelog/ddl/create-table-users-roles-table.xml"></include>
-    <include file="db/changelog/ddl/add-foreign-key-table.xml"></include>
+    <include file="db/changelog/ddl/create-users-table.xml"/>
+    <include file="db/changelog/ddl/create-roles-table.xml"/>
+    <include file="db/changelog/ddl/create-profiles-table.xml"/>
+    <include file="db/changelog/ddl/create-table-users-roles-table.xml"/>
+    <include file="db/changelog/ddl/add-foreign-key-table.xml"/>
 
-    <includeAll path="db/changelog/dml"></includeAll>
+    <includeAll path="db/changelog/dml"/>
 </databaseChangeLog>

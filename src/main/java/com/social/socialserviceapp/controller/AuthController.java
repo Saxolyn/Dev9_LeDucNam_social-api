@@ -21,36 +21,34 @@ public class AuthController {
     private UserService userService;
     private OtpService otpService;
 
-    private ApplicationEventPublisher applicationEventPublisher;
-
     @Autowired
-    public AuthController(UserService userService, OtpService otpService){
+    public AuthController(UserService userService, OtpService otpService) {
         this.userService = userService;
         this.otpService = otpService;
     }
 
     @PostMapping("/register")
-    public Response register(@Valid @RequestBody UserRequestDTO requestDTO) throws Exception{
+    public Response register(@Valid @RequestBody UserRequestDTO requestDTO) {
         return userService.register(requestDTO);
     }
 
-    @PostMapping(value = "/login")
-    public Response login(@RequestBody LoginRequestDTO requestDTO){
+    @PostMapping("/login")
+    public Response login(@RequestBody LoginRequestDTO requestDTO) {
         return otpService.sendOTP(requestDTO);
     }
 
     @PostMapping("/verify-otp")
-    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO){
+    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO) {
         return otpService.verifyOtp(requestDTO);
     }
 
     @PostMapping("/forgot-password")
-    public Response forgotPassword(@RequestBody ForgotPasswordRequestDTO requestDTO){
+    public Response forgotPassword(@RequestBody ForgotPasswordRequestDTO requestDTO) {
         return userService.forgotPassword(requestDTO);
     }
 
     @PutMapping("/reset-password")
-    public Response resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
+    public Response resetPassword(@RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
         return userService.resetPassword(resetPasswordRequestDTO);
     }
 

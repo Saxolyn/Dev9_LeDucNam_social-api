@@ -1,9 +1,6 @@
 package com.social.socialserviceapp.advice;
 
-import com.social.socialserviceapp.exception.ExpiredOtpException;
-import com.social.socialserviceapp.exception.InvalidOtpException;
-import com.social.socialserviceapp.exception.InvalidTokenRequestException;
-import com.social.socialserviceapp.exception.NotFoundException;
+import com.social.socialserviceapp.exception.*;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.util.Constants;
 import org.slf4j.Logger;
@@ -72,6 +69,15 @@ public class SocialExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public Response handleNotFoundException(NotFoundException ex, WebRequest request){
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
+                ex.getClass()
+                        .getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = MappingException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public Response handleMappingException(MappingException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
                 ex.getClass()
                         .getName(), resolvePathFromWebRequest(request));

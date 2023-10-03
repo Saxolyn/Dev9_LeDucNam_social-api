@@ -25,8 +25,7 @@ public class RedisConfig {
 
     @Bean
     public RedisStandaloneConfiguration redisStandaloneConfiguration(){
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
-        return redisStandaloneConfiguration;
+        return new RedisStandaloneConfiguration(host, port);
     }
 
     @Bean

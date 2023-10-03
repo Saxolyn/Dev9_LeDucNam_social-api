@@ -3,8 +3,11 @@ package com.social.socialserviceapp.service;
 import com.social.socialserviceapp.model.dto.request.ForgotPasswordRequestDTO;
 import com.social.socialserviceapp.model.dto.request.ResetPasswordRequestDTO;
 import com.social.socialserviceapp.model.dto.request.UserRequestDTO;
+import com.social.socialserviceapp.model.entities.User;
 import com.social.socialserviceapp.result.Response;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -14,5 +17,7 @@ public interface UserService {
     public Response forgotPassword(ForgotPasswordRequestDTO requestDTO);
 
     public Response resetPassword(ResetPasswordRequestDTO requestDTO);
+
+    public Optional<User> findUserByUsername(String username);
 
 }

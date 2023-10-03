@@ -2,18 +2,23 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+                  https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="20230923_create_roles_table" author="kyrios">
-        <createTable tableName="roles">
-            <column name="id" type="BIGINT">
+    <changeSet id="20231003_create_posts_table" author="kyrios">
+        <createTable tableName="posts">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" unique="true" nullable="false"/>
             </column>
-            <column name="role_name" type="VARCHAR(255)"/>
+            <column name="content" type="TEXT"/>
+            <column name="image" type="VARCHAR(255)"/>
+            <column name="status" type="TINYINT"/>
             <column name="created_by" type="VARCHAR(255)"/>
             <column name="created_date" type="DATETIME"/>
             <column name="last_modified_by" type="VARCHAR(255)"/>
             <column name="last_modified_date" type="DATETIME"/>
+            <column name="user_id" type="BIGINT">
+                <constraints foreignKeyName="fk_post_user" references="users(id)"/>
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>

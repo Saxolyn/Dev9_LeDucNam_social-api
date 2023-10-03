@@ -31,7 +31,7 @@ public class User extends BaseEntity<Long> {
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(User user){
+    public User(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
