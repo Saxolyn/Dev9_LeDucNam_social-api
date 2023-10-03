@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -26,8 +27,24 @@ public class ProfileController {
     @PostMapping(value = "/update-information", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(description = "aduchat")
-    public Response updateInformation(UpdateInformationRequestDTO requestDTO,
-                                      @RequestPart("avatar") MultipartFile multipartFile) throws IOException {
+    public Response updateInformation(@Valid UpdateInformationRequestDTO requestDTO,
+                                      @RequestPart(value = "avatar", required = false)
+                                      MultipartFile multipartFile) throws IOException{
         return profileService.updateInformation(requestDTO, multipartFile);
+    }
+
+    @GetMapping(value = "/show-avatar", produces = {
+            MediaType.IMAGE_JPEG_VALUE,
+            MediaType.IMAGE_PNG_VALUE})
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Operation(description = "aduchat")
+    public @ResponseBody byte[] showAvatar() throws IOException{
+        return profileService.showAvatar();
+    }
+
+    @GetMapping("/my-info")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public Response myInfo(){
+        return profileService.showMyInfo();
     }
 }

@@ -10,6 +10,11 @@ import java.io.IOException;
 @Service
 public interface ProfileService {
 
-    public Response updateInformation(UpdateInformationRequestDTO requestDTO, MultipartFile multipartFile) throws IOException;
+    public Response updateInformation(UpdateInformationRequestDTO requestDTO,
+                                      MultipartFile multipartFile) throws IOException;
+
+    public byte[] showAvatar() throws IOException;
+
+    public Response showMyInfo();
 
 }
