@@ -16,7 +16,7 @@ public interface UserService {
 
     public Response forgotPassword(ForgotPasswordRequestDTO requestDTO);
 
-    public Response resetPassword(ResetPasswordRequestDTO requestDTO);
+    public Response resetPassword(String token, ResetPasswordRequestDTO requestDTO);
 
     public Optional<User> findUserByUsername(String username);
 

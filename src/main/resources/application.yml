@@ -36,3 +36,8 @@ logging:
     org.hibernate.SQL: DEBUG
     com.zaxxer.hikari.HikariConfig: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+#Token properties
+token:
+  password:
+    reset:
+      duration: 3600000

@@ -28,6 +28,16 @@ public class RedisUtil {
         }
     }
 
+    public void setValue(String key, String value) throws SocialAppException{
+        try {
+            redisTemplate.opsForValue()
+                    .set(key, value);
+            redisTemplate.expire(key, timeExpired, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+//            throw new SocialAppException("Error while saving to cache", e.getMessage());
+        }
+    }
+
     public Optional<String> getValue(String key) throws SocialAppException{
         try {
             Boolean b = redisTemplate.hasKey(key);
@@ -47,8 +57,7 @@ public class RedisUtil {
         try {
             redisTemplate.delete(key);
         } catch (Exception e) {
-            throw new SocialAppException(
-                    "Error while removing from the cache");
+            throw new SocialAppException("Error while removing from the cache");
         }
     }
 }

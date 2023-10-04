@@ -27,11 +27,15 @@ public class User extends BaseEntity<Long> {
     @Column
     private String password;
 
+    @Column(name = "is_active")
+    private Boolean active;
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User(User user) {
+    public User(User user){
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();

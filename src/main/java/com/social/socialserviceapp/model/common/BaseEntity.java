@@ -1,6 +1,5 @@
 package com.social.socialserviceapp.model.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -23,7 +22,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     private ID id;
 
     @CreatedBy
-    @Column(name = "created_by")
+    @Column(name = "created_by", insertable = false, updatable = false)
     private String createdBy;
 
     @CreatedDate
@@ -31,7 +30,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     private LocalDateTime createdDate;
 
     @LastModifiedBy
-    @Column(name = "last_modified_by")
+    @Column(name = "last_modified_by", insertable = false, updatable = false)
     private String lastModifiedBy;
 
     @LastModifiedDate

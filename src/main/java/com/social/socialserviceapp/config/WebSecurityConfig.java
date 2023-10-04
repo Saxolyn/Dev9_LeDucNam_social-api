@@ -1,5 +1,6 @@
 package com.social.socialserviceapp.config;
 
+import com.social.socialserviceapp.security.JwtAccessDeniedHandler;
 import com.social.socialserviceapp.security.JwtAuthenticationEntryPoint;
 import com.social.socialserviceapp.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,42 +26,47 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
+    private final JwtAccessDeniedHandler accessDeniedHandler;
+
     @Autowired
     public WebSecurityConfig(UserDetailsService userDetailsService,
-                             JwtAuthenticationEntryPoint authenticationEntryPoint) {
+                             JwtAuthenticationEntryPoint authenticationEntryPoint,
+                             JwtAccessDeniedHandler accessDeniedHandler){
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Override
     @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception{
         return super.authenticationManagerBean();
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(){
         return new JwtAuthenticationFilter();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
 
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception{
         http.csrf()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler)
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -83,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/api-docs/**"};
 
     @Override
-    public void configure(WebSecurity web) {
+    public void configure(WebSecurity web){
         web.ignoring()
                 .antMatchers(AUTH_WHITELIST);
     }

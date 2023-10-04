@@ -103,12 +103,17 @@ public class CommonUtil {
         }
     }
 
-    public static File writeBytesToFile(String fileOutput, byte[] bytes)
-            throws IOException{
+    public static File writeBytesToFile(String fileOutput, byte[] bytes) throws IOException{
         File f = new File(fileOutput);
         try (FileOutputStream fos = new FileOutputStream(f)) {
             fos.write(bytes);
             return f;
         }
     }
+
+    public static String generateRandomUuid(){
+        return UUID.randomUUID()
+                .toString();
+    }
+
 }
