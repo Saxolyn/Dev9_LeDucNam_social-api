@@ -13,23 +13,21 @@ import java.nio.file.StandardCopyOption;
 
 @Slf4j
 public class FileUploadUtil {
-    public static String handleImageUpload(MultipartFile multipartFile) throws IOException{
+
+    public static String handleImageUpload(MultipartFile multipartFile) throws IOException {
         String name = multipartFile.getOriginalFilename();
         log.info("File name: {}", name);
         String type = multipartFile.getContentType();
         log.info("File type: {}", type);
         long size = multipartFile.getSize();
         log.info("File size: {}", size);
-        Path folder = Paths.get("src/main/resources/file_upload");
+        Path folder = Paths.get("D:/images");
         String filename = FilenameUtils.getBaseName(multipartFile.getOriginalFilename());
         String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         Path file = Files.createTempFile(folder, filename + "-", "." + extension);
         try (InputStream inputStream = multipartFile.getInputStream()) {
             Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
-            return file.getFileName()
-                    .toString();
-        } catch (IOException ioe) {
-            throw new IOException("Error saving uploaded file: " + filename, ioe);
+            return file.getFileName().toString();
         }
     }
 }

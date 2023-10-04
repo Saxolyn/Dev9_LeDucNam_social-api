@@ -20,10 +20,9 @@ import javax.servlet.http.HttpServletResponse;
 public class SocialExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(SocialExceptionHandler.class);
 
-    private String resolvePathFromWebRequest(WebRequest request){
+    private String resolvePathFromWebRequest(WebRequest request) {
         try {
-            return ((ServletWebRequest) request).getRequest()
-                    .getRequestURI();
+            return ((ServletWebRequest) request).getRequest().getRequestURI();
         } catch (Exception ex) {
             return null;
         }
@@ -32,55 +31,65 @@ public class SocialExceptionHandler {
     @ExceptionHandler(value = InvalidTokenRequestException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ResponseBody
-    public Response handleInvalidTokenRequestException(InvalidTokenRequestException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_ACCEPTABLE, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleInvalidTokenRequestException(InvalidTokenRequestException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_ACCEPTABLE, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(value = BadCredentialsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Response handleBadCredentialsException(BadCredentialsException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(value = InvalidOtpException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public Response handleInvalidOtpException(InvalidOtpException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleInvalidOtpException(InvalidOtpException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(value = ExpiredOtpException.class)
     @ResponseStatus(HttpStatus.GONE)
     @ResponseBody
-    public Response handleExpiredOtpException(ExpiredOtpException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_GONE, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleExpiredOtpException(ExpiredOtpException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_GONE, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(value = NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public Response handleNotFoundException(NotFoundException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleNotFoundException(NotFoundException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(value = MappingException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Response handleMappingException(MappingException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleMappingException(MappingException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = SocialAppException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Response handleSocialAppException(SocialAppException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Response handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
 //    @Autowired

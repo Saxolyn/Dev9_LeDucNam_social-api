@@ -16,10 +16,6 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {
-        "createdDate",
-        "lastModifiedDate"})
-// When it has interfaces in generics, it still has to use the extends keyword.
 public abstract class BaseEntity<ID extends Serializable> implements Serializable {
 
     @Id

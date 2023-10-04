@@ -16,9 +16,9 @@
             <column name="created_date" type="DATETIME"/>
             <column name="last_modified_by" type="VARCHAR(255)"/>
             <column name="last_modified_date" type="DATETIME"/>
-            <column name="user_id" type="BIGINT">
-                <constraints foreignKeyName="fk_post_user" references="users(id)"/>
-            </column>
         </createTable>
+    </changeSet>
+    <changeSet id="20231004_change_column_name_and_type" author="kyrios">
+        <renameColumn tableName="posts" oldColumnName="image" newColumnName="images" columnDataType="TEXT"/>
     </changeSet>
 </databaseChangeLog>

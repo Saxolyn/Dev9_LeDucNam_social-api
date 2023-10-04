@@ -28,6 +28,4 @@ public class Post extends BaseEntity<Long> {
     @Column
     private PostStatus status;
 
-    @Column
-    private Long userId;
 }

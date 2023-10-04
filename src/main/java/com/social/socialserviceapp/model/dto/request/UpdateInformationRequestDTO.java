@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UpdateInformationRequestDTO {
 
-    @NotNull
     private String realName;
     private String birthDate;
     private String occupation;

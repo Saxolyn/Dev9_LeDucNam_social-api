@@ -11,13 +11,17 @@ import com.social.socialserviceapp.service.ProfileService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import static com.social.socialserviceapp.util.FileUploadUtil.handleImageUpload;
 
@@ -34,39 +38,34 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     public Response updateInformation(UpdateInformationRequestDTO requestDTO,
-                                      MultipartFile multipartFile) throws IOException{
-        Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO, multipartFile);
+                                      MultipartFile multipartFile) throws IOException {
+        Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO);
         profile.setAvatar(handleImageUpload(multipartFile));
         profileRepository.save(profile);
         return Response.success("Updated information successfully");
     }
 
     @Override
-    public byte[] showAvatar() throws IOException{
-        String username = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+    public ResponseEntity<byte[]> showAvatar() throws IOException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Profile profile = profileRepository.findProfileByUsername(username);
         if (profile == null) {
             throw new NotFoundException("Profile not found.");
         } else {
-            InputStream inputStream = getClass().getResourceAsStream("/file_upload/" + profile.getAvatar());
-            return IOUtils.toByteArray(inputStream);
+            File fi = new File("D:/images/" + profile.getAvatar());
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(Files.readAllBytes(fi.toPath()));
         }
     }
 
     @Override
-    public Response showMyInfo(){
-        String username = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getName();
+    public Response showMyInfo() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Profile profile = profileRepository.findProfileByUsername(username);
         if (profile == null) {
             throw new NotFoundException("Profile not found.");
         } else {
             MyInfoResponseDTO responseDTO = profileMapper.covertProfileToMyInfoResponseDTO(profile);
-            return Response.success("Show information.")
-                    .withData(responseDTO);
+            return Response.success("Show information.").withData(responseDTO);
         }
     }
 }
