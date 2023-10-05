@@ -32,10 +32,9 @@ public class SocialExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
-    private String resolvePathFromWebRequest(WebRequest request){
+    private String resolvePathFromWebRequest(WebRequest request) {
         try {
-            return ((ServletWebRequest) request).getRequest()
-                    .getRequestURI();
+            return ((ServletWebRequest) request).getRequest().getRequestURI();
         } catch (Exception ex) {
             return null;
         }
@@ -100,31 +99,34 @@ public class SocialExceptionHandler {
     @ExceptionHandler(value = IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Response handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request){
-        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null,
-                ex.getClass()
-                        .getName(), resolvePathFromWebRequest(request));
+    public Response handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_BAD_REQUEST, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
+    }
+
+    @ExceptionHandler(value = NullPointerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Response handleNullPointerException(NullPointerException ex, WebRequest request) {
+        return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ex.getMessage(), null, ex.getClass()
+                .getName(), resolvePathFromWebRequest(request));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Response processValidationError(MethodArgumentNotValidException ex, WebRequest request){
+    public Response processValidationError(MethodArgumentNotValidException ex, WebRequest request) {
         BindingResult result = ex.getBindingResult();
         List<ObjectError> allErrors = result.getAllErrors();
-        String data = processAllErrors(allErrors).stream()
-                .collect(Collectors.joining("\n"));
-        return new Response(data, ex.getClass()
-                .getName(), resolvePathFromWebRequest(request));
+        String data = processAllErrors(allErrors).stream().collect(Collectors.joining("\n"));
+        return new Response(data, ex.getClass().getName(), resolvePathFromWebRequest(request));
     }
 
-    private List<String> processAllErrors(List<ObjectError> allErrors){
-        return allErrors.stream()
-                .map(this::resolveLocalizedErrorMessage)
-                .collect(Collectors.toList());
+    private List<String> processAllErrors(List<ObjectError> allErrors) {
+        return allErrors.stream().map(this::resolveLocalizedErrorMessage).collect(Collectors.toList());
     }
 
-    private String resolveLocalizedErrorMessage(ObjectError objectError){
+    private String resolveLocalizedErrorMessage(ObjectError objectError) {
         Locale currentLocale = LocaleContextHolder.getLocale();
         String localizedErrorMessage = messageSource.getMessage(objectError, currentLocale);
         logger.info(localizedErrorMessage);

@@ -1,5 +1,6 @@
 package com.social.socialserviceapp.service.impl;
 
+import com.social.socialserviceapp.exception.NotFoundException;
 import com.social.socialserviceapp.exception.SocialAppException;
 import com.social.socialserviceapp.mapper.PostMapper;
 import com.social.socialserviceapp.model.dto.request.ShowMyPostRequestDTO;
@@ -37,8 +38,21 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
 
     @Override
-    public Response createAPost(String content, MultipartFile[] multipartFiles) throws Exception {
-        Post post = new Post();
+    public Response createOrEditAPost(PostStatus status, Long id, String content,
+                                      MultipartFile[] multipartFiles) throws Exception {
+        Post post = null;
+        if (id == null) {
+            post = new Post();
+            if (CommonUtil.isNullOrEmpty(content) && multipartFiles == null) {
+                throw new SocialAppException("Plz have at least 1 post or 1 image.");
+            }
+            post.setContent(content);
+        } else {
+            post = postRepository.findById(id).orElseThrow(() -> new NotFoundException("Post not found."));
+            if (!CommonUtil.isNullOrEmpty(content)) {
+                post.setContent(content);
+            }
+        }
         if (multipartFiles != null) {
             List<String> fileNames = new LinkedList<>();
             Arrays.stream(multipartFiles).forEach(mf -> {
@@ -50,11 +64,7 @@ public class PostServiceImpl implements PostService {
             });
             post.setImages(CommonUtil.toString(fileNames, ","));
         }
-        if (CommonUtil.isNullOrEmpty(content) && multipartFiles == null) {
-            throw new SocialAppException("Plz have at least 1 post or 1 image.");
-        }
-        post.setContent(content);
-        post.setStatus(PostStatus.PUBLIC);
+        post.setStatus(status);
         postRepository.save(post);
         PostResponseDTO responseDTO = postMapper.convertPostToPostResponseDTO(post);
         return Response.success("Created post successfully.").withData(responseDTO);
@@ -75,4 +85,5 @@ public class PostServiceImpl implements PostService {
             return Response.success("No posts.");
         }
     }
+
 }

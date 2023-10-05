@@ -5,7 +5,6 @@ import com.social.socialserviceapp.model.dto.request.UpdateInformationRequestDTO
 import com.social.socialserviceapp.model.dto.response.MyInfoResponseDTO;
 import com.social.socialserviceapp.model.entities.Profile;
 import com.social.socialserviceapp.repository.ProfileRepository;
-import com.social.socialserviceapp.service.ProfileService;
 import com.social.socialserviceapp.service.UserService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
@@ -14,7 +13,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 

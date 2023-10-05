@@ -7,6 +7,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
+  main:
+    banner-mode: console
   #Liquibase properties
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml

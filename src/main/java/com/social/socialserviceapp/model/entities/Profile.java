@@ -17,7 +17,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "profiles")
-public class Profile extends BaseEntity<Long> {
+public class Profile extends BaseEntity {
 
     @Column(name = "real_name")
     private String realName;

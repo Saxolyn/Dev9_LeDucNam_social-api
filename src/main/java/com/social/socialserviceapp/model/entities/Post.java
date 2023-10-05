@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Entity
 @Table(name = "posts")
-public class Post extends BaseEntity<Long> {
+public class Post extends BaseEntity {
 
     @Column
     private String content;

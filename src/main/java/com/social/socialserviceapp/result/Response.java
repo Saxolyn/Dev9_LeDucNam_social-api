@@ -11,6 +11,7 @@ import java.time.Instant;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
+
     private String timestamp;
     private String type;
     private int status;

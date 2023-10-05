@@ -7,6 +7,7 @@ import com.social.socialserviceapp.model.entities.Post;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.ObjectMapperUtils;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +23,13 @@ public class PostMapper {
     private ModelMapper modelMapper;
 
     public PostResponseDTO convertPostToPostResponseDTO(Post post) {
-        return modelMapper.createTypeMap(post, PostResponseDTO.class).setPostConverter(converter -> {
-            converter.getDestination().setImages(CommonUtil.toList(converter.getSource().getImages(), ","));
-            return converter.getDestination();
-        }).map(post);
+        if (modelMapper.getTypeMap(Post.class, PostResponseDTO.class) == null) {
+            modelMapper.createTypeMap(post, PostResponseDTO.class).setPostConverter(converter -> {
+                converter.getDestination().setImages(CommonUtil.toList(converter.getSource().getImages(), ","));
+                return converter.getDestination();
+            });
+        }
+        return modelMapper.map(post, PostResponseDTO.class);
     }
 
     public List<ShowMyPostResponseDTO> convertPostToShowMyPostResponseDTO(List<Post> posts) {

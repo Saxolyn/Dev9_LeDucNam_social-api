@@ -1,6 +1,8 @@
 package com.social.socialserviceapp.model.common;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -11,18 +13,17 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseEntity<ID extends Serializable> implements Serializable {
+public abstract class BaseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private ID id;
+    private Long id;
 
     @CreatedBy
-    @Column(name = "created_by", insertable = false, updatable = false)
+    @Column(name = "created_by")
     private String createdBy;
 
     @CreatedDate
@@ -30,7 +31,7 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
     private LocalDateTime createdDate;
 
     @LastModifiedBy
-    @Column(name = "last_modified_by", insertable = false, updatable = false)
+    @Column(name = "last_modified_by")
     private String lastModifiedBy;
 
     @LastModifiedDate

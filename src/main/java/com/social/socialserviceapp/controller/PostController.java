@@ -1,6 +1,8 @@
 package com.social.socialserviceapp.controller;
 
 import com.social.socialserviceapp.model.dto.request.ShowMyPostRequestDTO;
+import com.social.socialserviceapp.model.entities.Post;
+import com.social.socialserviceapp.model.enums.PostStatus;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.PostService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,11 +27,19 @@ public class PostController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response createAPost(@RequestPart(value = "content", required = false) String content,
                                 @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles) throws Exception {
-        return postService.createAPost(content, multipartFiles);
+        return postService.createOrEditAPost(PostStatus.PUBLIC, null, content, multipartFiles);
     }
 
     @GetMapping(value = "/my-posts")
     public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO) {
         return postService.showMyPosts(showMyPostRequestDTO);
+    }
+
+    @PutMapping(value = "/{status}/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public Response updateAPost(@PathVariable(required = true) PostStatus status,
+                                @PathVariable(required = true) Long id,
+                                @RequestPart(value = "content", required = false) String content,
+                                @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles) throws Exception {
+        return postService.createOrEditAPost(status, id, content, multipartFiles);
     }
 }

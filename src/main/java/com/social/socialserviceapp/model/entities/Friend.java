@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Entity
 @Table(name = "friends")
-public class Friend extends BaseEntity<Long> {
+public class Friend extends BaseEntity {
 
     @Column(name = "base_user_id")
     private Long baseUserId;

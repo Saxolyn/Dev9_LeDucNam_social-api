@@ -15,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "roles")
-public class Role extends BaseEntity<Long> {
+public class Role extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name")
