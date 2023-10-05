@@ -12,4 +12,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     @Query(value = "SELECT * FROM profiles p LEFT JOIN users u ON u.id = p.user_id WHERE u.username = :username",
             nativeQuery = true)
     Profile findProfileByUsername(@Param("username") String username);
+
+    Profile findProfileByLastModifiedBy(String username);
 }

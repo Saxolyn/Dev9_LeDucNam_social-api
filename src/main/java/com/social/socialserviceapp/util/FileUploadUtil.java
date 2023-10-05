@@ -21,7 +21,7 @@ public class FileUploadUtil {
         log.info("File type: {}", type);
         long size = multipartFile.getSize();
         log.info("File size: {}", size);
-        Path folder = Paths.get("D:/images");
+        Path folder = Paths.get("src/main/resources/file_upload");
         String filename = FilenameUtils.getBaseName(multipartFile.getOriginalFilename());
         String extension = FilenameUtils.getExtension(multipartFile.getOriginalFilename());
         Path file = Files.createTempFile(folder, filename + "-", "." + extension);

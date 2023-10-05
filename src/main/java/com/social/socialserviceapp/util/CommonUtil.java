@@ -116,4 +116,15 @@ public class CommonUtil {
                 .toString();
     }
 
+    public static Date convertStringToDate(String date) throws Exception{
+        if (isNullOrEmpty(date)) {
+            return null;
+        } else {
+            String pattern = "yyyy-MM-dd";
+            SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+            dateFormat.setLenient(false);
+            return dateFormat.parse(date);
+        }
+    }
+
 }

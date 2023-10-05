@@ -13,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
@@ -36,7 +35,7 @@ public class ProfileController {
     @GetMapping(value = "/my-avatar")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(description = "aduchat")
-    public ResponseEntity<byte[]> showAvatar() throws IOException {
+    public ResponseEntity showAvatar() throws IOException{
         return profileService.showAvatar();
     }
 
