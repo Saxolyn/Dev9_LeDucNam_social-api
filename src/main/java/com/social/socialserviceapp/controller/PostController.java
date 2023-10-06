@@ -1,14 +1,12 @@
 package com.social.socialserviceapp.controller;
 
 import com.social.socialserviceapp.model.dto.request.ShowMyPostRequestDTO;
-import com.social.socialserviceapp.model.entities.Post;
 import com.social.socialserviceapp.model.enums.PostStatus;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.PostService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -41,5 +39,10 @@ public class PostController {
                                 @RequestPart(value = "content", required = false) String content,
                                 @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles) throws Exception {
         return postService.createOrEditAPost(status, id, content, multipartFiles);
+    }
+
+    @DeleteMapping("/{postId}")
+    public Response deleteAPost(@PathVariable Long postId) {
+        return postService.deleteAPost(postId);
     }
 }
