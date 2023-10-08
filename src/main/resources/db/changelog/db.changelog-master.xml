@@ -8,6 +8,9 @@
     <include file="db/changelog/ddl/create-profiles-table.xml"/>
     <include file="db/changelog/ddl/create-posts-table.xml"/>
     <include file="db/changelog/ddl/create-comments-table.xml"/>
+    <include file="db/changelog/ddl/create-reacts-table.xml"/>
+    <include file="db/changelog/ddl/create-friends-table.xml"/>
+    <include file="db/changelog/ddl/create-notifications-table.xml"/>
     <include file="db/changelog/ddl/create-password-reset-token-table.xml"/>
     <include file="/db/changelog/ddl/create-users-roles-table.xml"/>
     <include file="db/changelog/ddl/add-foreign-key-table.xml"/>

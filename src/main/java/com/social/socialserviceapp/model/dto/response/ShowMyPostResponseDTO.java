@@ -17,10 +17,12 @@ public class ShowMyPostResponseDTO {
     private Long id;
     private String content;
     private List<String> images;
+    private int likes;
+    private int comments;
+    private PostStatus status;
     private String createdBy;
     private String createdDate;
     private String lastModifiedBy;
     private String lastModifiedDate;
-    private PostStatus status;
 
 }

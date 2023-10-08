@@ -2,17 +2,14 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
-
-    <changeSet id="20231004_create_notifications_table" author="kyrios">
-        <createTable tableName="notifications">
-            <column name="id" type="BIGINT" autoIncrement="true">
+                        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="20231008_create_reacts_table" author="kyrios">
+        <createTable tableName="reacts">
+            <column name="id" type="BIGINT">
                 <constraints primaryKey="true" unique="true" nullable="false"/>
             </column>
-            <column name="descriptions" type="VARCHAR(255)"/>
-            <column name="send_from" type="BIGINT"/>
-            <column name="send_to" type="BIGINT"/>
             <column name="post_id" type="BIGINT"/>
+            <column name="comment_id" type="BIGINT"/>
             <column name="status" type="TINYINT"/>
             <column name="created_by" type="VARCHAR(255)"/>
             <column name="created_date" type="DATETIME"/>
@@ -20,11 +17,7 @@
             <column name="last_modified_date" type="DATETIME"/>
         </createTable>
     </changeSet>
-    <changeSet id="20231008_remove_column_and_add_column" author="kyrios">
-        <dropColumn tableName="notifications" columnName="send_from"/>
-        <dropColumn tableName="notifications" columnName="send_to"/>
-        <addColumn tableName="notifications">
-            <column name="friend_id" type="BIGINT"></column>
-        </addColumn>
+    <changeSet id="20231008_add_default_value_for_column" author="kyrios">
+        <addAutoIncrement tableName="reacts" columnName="id" columnDataType="BIGINT"/>
     </changeSet>
 </databaseChangeLog>

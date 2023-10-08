@@ -18,4 +18,10 @@
             <column name="last_modified_date" type="DATETIME"/>
         </createTable>
     </changeSet>
+    <changeSet id="20231008_add_column" author="kyrios">
+        <addColumn tableName="friends">
+            <column name="sent_on" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

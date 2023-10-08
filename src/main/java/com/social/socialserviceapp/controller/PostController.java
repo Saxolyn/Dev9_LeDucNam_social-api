@@ -24,24 +24,27 @@ public class PostController {
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response createAPost(@RequestPart(value = "content", required = false) String content,
-                                @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles) throws Exception {
+                                @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles){
         return postService.createOrEditAPost(PostStatus.PUBLIC, null, content, multipartFiles);
     }
 
     @GetMapping(value = "/my-posts")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO) {
         return postService.showMyPosts(showMyPostRequestDTO);
     }
 
     @PutMapping(value = "/{status}/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response updateAPost(@PathVariable(required = true) PostStatus status,
                                 @PathVariable(required = true) Long id,
                                 @RequestPart(value = "content", required = false) String content,
-                                @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles) throws Exception {
+                                @RequestPart(value = "image", required = false) MultipartFile[] multipartFiles){
         return postService.createOrEditAPost(status, id, content, multipartFiles);
     }
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response deleteAPost(@PathVariable Long postId) {
         return postService.deleteAPost(postId);
     }

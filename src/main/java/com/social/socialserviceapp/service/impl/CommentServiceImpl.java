@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -37,9 +36,10 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
 
     @Override
-    public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO) {
+    public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO){
         try {
-            Post post = postRepository.findById(postId).orElseThrow(() -> new NotFoundException("Posts not found."));
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new NotFoundException("Posts not found."));
             Comment comment = getComment(requestDTO, post);
             commentRepository.save(comment);
             return Response.success("Comment on a post successfully.");
@@ -49,13 +49,16 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    private Comment getComment(CommentRequestDTO requestDTO, Post post) {
+    private Comment getComment(CommentRequestDTO requestDTO, Post post){
         Comment comment = new Comment();
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
         if (username.equals(post.getLastModifiedBy())) {
             comment.setContent(requestDTO.getContent());
         } else {
-            if (post.getStatus().equals(PostStatus.PUBLIC)) {
+            if (post.getStatus()
+                    .equals(PostStatus.PUBLIC)) {
                 comment.setContent(requestDTO.getContent());
             } else {
                 throw new SocialAppException("This posts is private.");
@@ -66,18 +69,20 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Response showComments(Long postId) {
+    public Response showComments(Long postId){
         List<Comment> comments = commentRepository.getAllByPostId(postId);
         if (!CommonUtil.isNullOrEmpty(comments)) {
-            List<CommentResponseDTO> responseDTOList = commentMapper.convertCommentsLstToCommentResponseDTOLst(comments);
-            return Response.success("Show comments.").withData(responseDTOList);
+            List<CommentResponseDTO> responseDTOList = commentMapper.convertCommentsLstToCommentResponseDTOLst(
+                    comments);
+            return Response.success("Show comments.")
+                    .withData(responseDTOList);
         } else {
             return Response.success("No comments.");
         }
     }
 
     @Override
-    public Response deleteComment(Long commentId) {
+    public Response deleteComment(Long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
         commentRepository.delete(comment);
@@ -85,10 +90,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Response updateComment(Long commentId, CommentRequestDTO requestDTO) {
+    public Response updateComment(Long commentId, CommentRequestDTO requestDTO){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
         commentRepository.save(comment);
-        return null;
+        return Response.success("Updated comment successfully.");
     }
 }

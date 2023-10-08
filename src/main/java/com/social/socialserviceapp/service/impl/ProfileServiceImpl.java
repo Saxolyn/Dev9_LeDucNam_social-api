@@ -73,11 +73,6 @@ public class ProfileServiceImpl implements ProfileService {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(Response.success("Where did ur avatar go?"));
             }
-
-//            } else {
-//                return ResponseEntity.ok()
-//                        .body(null);
-//            }
         }
     }
 
@@ -95,4 +90,5 @@ public class ProfileServiceImpl implements ProfileService {
                     .withData(responseDTO);
         }
     }
+
 }

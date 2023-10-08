@@ -2,6 +2,7 @@ package com.social.socialserviceapp.mapper;
 
 import com.social.socialserviceapp.model.dto.request.UpdateInformationRequestDTO;
 import com.social.socialserviceapp.model.dto.response.MyInfoResponseDTO;
+import com.social.socialserviceapp.model.dto.response.SearchProfileResponseDTO;
 import com.social.socialserviceapp.model.entities.Profile;
 import com.social.socialserviceapp.repository.ProfileRepository;
 import com.social.socialserviceapp.service.UserService;
@@ -12,6 +13,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ProfileMapper {
@@ -27,25 +31,6 @@ public class ProfileMapper {
 
     public Profile convertRequestDTOToProfile(UpdateInformationRequestDTO requestDTO){
         try {
-//            if (modelMapper.getTypeMap(UpdateInformationRequestDTO.class, Profile.class) == null) {
-//                modelMapper.createTypeMap(requestDTO, Profile.class)
-//                        .setPostConverter(converter -> {
-//                            String username = SecurityContextHolder.getContext()
-//                                    .getAuthentication()
-//                                    .getName();
-////                            Optional.ofNullable(userService.findUserByUsername(username)
-////                                            .orElseThrow(
-////                                                    () -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND)))
-////                                    .ifPresent(u -> converter.getDestination()
-////                                            .setUserId(u.getId()));
-//
-//                            if (profile != null) {
-//                                converter.getDestination()
-//                                        .setId(profile.getId());
-//                            }
-//                            return converter.getDestination();
-//                        });
-//            }
             String username = SecurityContextHolder.getContext()
                     .getAuthentication()
                     .getName();
@@ -85,4 +70,27 @@ public class ProfileMapper {
         }
     }
 
+    public List<SearchProfileResponseDTO> convertListProfilesToListSearchProfileResponseDTO(List<Profile> profiles){
+        try {
+            return profiles.stream()
+                    .map(profile -> {
+                        if (modelMapper.getTypeMap(Profile.class, SearchProfileResponseDTO.class) == null) {
+                            modelMapper.createTypeMap(profile, SearchProfileResponseDTO.class)
+                                    .setPostConverter(converter -> {
+                                        converter.getDestination()
+                                                .setUserId(userService.findUserByUsername(converter.getSource()
+                                                                .getLastModifiedBy())
+                                                        .get()
+                                                        .getId());
+                                        return converter.getDestination();
+                                    });
+                        }
+                        return modelMapper.map(profile, SearchProfileResponseDTO.class);
+                    })
+                    .collect(Collectors.toList());
+        } catch (MappingException me) {
+            throw new com.social.socialserviceapp.exception.MappingException(
+                    Constants.RESPONSE_MESSAGE.MODEL_MAPPER_ERROR);
+        }
+    }
 }

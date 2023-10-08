@@ -12,19 +12,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class OpenApiConfig {
 
-    public static final String securitySchemeName = "bearerAuth";
+    public static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
     @Bean
     public OpenAPI openApiInformation(){
-        return new OpenAPI().addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
-                .components(new Components().addSecuritySchemes(securitySchemeName,
-                        new SecurityScheme().name(securitySchemeName)
+        return new OpenAPI().addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
+                .components(new Components().addSecuritySchemes(SECURITY_SCHEME_NAME,
+                        new SecurityScheme().name(SECURITY_SCHEME_NAME)
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")))
                 .info(new Info().contact(new Contact().email("leducnam209@gmail.com")
                                 .name("Kyrios"))
-                        .description("Social API")
+                        .description("Correct me if I'm wrong.")
                         .summary("Demo of Social API")
                         .title("Social API")
                         .version("V1.0.0"));
