@@ -2,6 +2,7 @@ package com.social.socialserviceapp.controller;
 
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.NotificationService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class NotificationController {
 
     @GetMapping("")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Hidden
     public Response showNotifications(){
         return notificationService.showNotifications();
     }

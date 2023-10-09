@@ -14,4 +14,10 @@ public interface FriendService {
     public Response cancelARequest(Long userId);
 
     public Response sendRequests();
+
+    public Response acceptARequest(Long userId);
+
+    public Response showMyFriends();
+
+    public Response unFriend(Long userId);
 }

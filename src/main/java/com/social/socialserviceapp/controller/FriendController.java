@@ -23,22 +23,22 @@ public class FriendController {
         return friendService.sendARequest(userId);
     }
 
-    @PutMapping("/cancel-request/{userId}")
+    @DeleteMapping("/cancel-request/{userId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response cancelARequest(@PathVariable Long userId){
         return friendService.cancelARequest(userId);
     }
 
-    @PostMapping("/unfriend")
+    @PostMapping("/unfriend/{userId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response unFriend(){
-        return null;
+    public Response unFriend(@PathVariable Long userId){
+        return friendService.unFriend(userId);
     }
 
-    @PostMapping("/accept-request")
+    @PostMapping("/accept-request/{userId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response acceptARequest(){
-        return null;
+    public Response acceptARequest(@PathVariable Long userId){
+        return friendService.acceptARequest(userId);
     }
 
     @GetMapping("/friend-requests")
@@ -47,7 +47,7 @@ public class FriendController {
         return friendService.friendRequests();
     }
 
-    @PostMapping("/sent-requests")
+    @GetMapping("/sent-requests")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response sentRequests(){
         return friendService.sendRequests();
@@ -57,6 +57,12 @@ public class FriendController {
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response searchFriend(@RequestParam String username){
         return friendService.searchFriend(username);
+    }
+
+    @GetMapping("/my-friends")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public Response showMyFriends(){
+        return friendService.showMyFriends();
     }
 
 }

@@ -30,7 +30,7 @@ public class PostController {
 
     @GetMapping(value = "/my-posts")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO) {
+    public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO){
         return postService.showMyPosts(showMyPostRequestDTO);
     }
 
@@ -45,7 +45,13 @@ public class PostController {
 
     @DeleteMapping("/{postId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response deleteAPost(@PathVariable Long postId) {
+    public Response deleteAPost(@PathVariable Long postId){
         return postService.deleteAPost(postId);
     }
+
+//    @GetMapping(value = "/other-posts/{postId}")
+//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+//    public Response showOtherPosts(ShowMyPostRequestDTO showMyPostRequestDTO){
+//        return postService.showMyPosts(showMyPostRequestDTO);
+//    }
 }

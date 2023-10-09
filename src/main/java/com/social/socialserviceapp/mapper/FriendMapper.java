@@ -3,6 +3,7 @@ package com.social.socialserviceapp.mapper;
 import com.social.socialserviceapp.exception.NotFoundException;
 import com.social.socialserviceapp.model.dto.response.FriendRequestsResponseDTO;
 import com.social.socialserviceapp.model.dto.response.SentRequestsResponseDTO;
+import com.social.socialserviceapp.model.dto.response.ShowMyFriendsResponseDTO;
 import com.social.socialserviceapp.model.entities.Friend;
 import com.social.socialserviceapp.model.entities.Profile;
 import com.social.socialserviceapp.model.entities.User;
@@ -67,15 +68,18 @@ public class FriendMapper {
                                         User user = userRepository.findById(converter.getSource()
                                                         .getOtherUserId())
                                                 .orElseThrow(() -> new NotFoundException("User not found."));
-                                        Profile profile = profileRepository.findProfileByLastModifiedBy(
-                                                user.getUsername());
+//                                        Profile profile = profileRepository.findProfileByLastModifiedBy(
+//                                                user.getUsername());
                                         converter.getDestination()
                                                 .setUsername(user.getUsername());
                                         converter.getDestination()
                                                 .setUserId(converter.getSource()
                                                         .getOtherUserId());
                                         converter.getDestination()
-                                                .setRealName(profile.getRealName());
+                                                .setSendOn(converter.getSource()
+                                                        .getSentOn());
+//                                        converter.getDestination()
+//                                                .setRealName(profile.getRealName());
                                         return converter.getDestination();
                                     });
                         }
@@ -86,6 +90,19 @@ public class FriendMapper {
             throw new com.social.socialserviceapp.exception.MappingException(
                     Constants.RESPONSE_MESSAGE.MODEL_MAPPER_ERROR);
         }
+    }
+
+    public List<ShowMyFriendsResponseDTO> convertFriendLstToMyFriendsResponseDTOLst(List<Friend> friends, Long userId,
+                                                                                    String username){
+        return friends.stream()
+                .map(friend -> {
+                    Long modifiedUserId = friend.getBaseUserId()
+                            .equals(userId) ? friend.getOtherUserId() : friend.getBaseUserId();
+                    String modifiedUsername = friend.getCreatedBy()
+                            .equals(username) ? friend.getLastModifiedBy() : friend.getCreatedBy();
+                    return new ShowMyFriendsResponseDTO(modifiedUserId, modifiedUsername);
+                })
+                .collect(Collectors.toList());
     }
 
 }

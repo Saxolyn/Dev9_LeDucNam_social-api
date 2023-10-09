@@ -33,7 +33,7 @@ public class ReactServiceImpl implements ReactService {
                 .getAuthentication()
                 .getName();
         React react = reactRepository.findByPostIdAndLastModifiedBy(postId, username);
-        if (PostStatus.PUBLIC.equals(post.getStatus())) {
+        if (PostStatus.PUBLIC.equals(post.getStatus()) || username.equals(post.getCreatedBy())) {
             if (react == null) {
                 react = new React();
                 react.setPostId(post.getId());

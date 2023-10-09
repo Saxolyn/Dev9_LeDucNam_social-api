@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
             comment.setContent(requestDTO.getContent());
         } else {
             if (post.getStatus()
-                    .equals(PostStatus.PUBLIC)) {
+                    .equals(PostStatus.PUBLIC) || username.equals(post.getCreatedBy())) {
                 comment.setContent(requestDTO.getContent());
             } else {
                 throw new SocialAppException("This posts is private.");
@@ -70,14 +70,20 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Response showComments(Long postId){
-        List<Comment> comments = commentRepository.getAllByPostId(postId);
-        if (!CommonUtil.isNullOrEmpty(comments)) {
-            List<CommentResponseDTO> responseDTOList = commentMapper.convertCommentsLstToCommentResponseDTOLst(
-                    comments);
-            return Response.success("Show comments.")
-                    .withData(responseDTOList);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Post not found."));
+        if (PostStatus.PUBLIC.equals(post.getStatus())) {
+            List<Comment> comments = commentRepository.getAllByPostIdOrderByLastModifiedDate(postId);
+            if (!CommonUtil.isNullOrEmpty(comments)) {
+                List<CommentResponseDTO> responseDTOList = commentMapper.convertCommentsLstToCommentResponseDTOLst(
+                        comments);
+                return Response.success("Show comments.")
+                        .withData(responseDTOList);
+            } else {
+                return Response.success("No comments.");
+            }
         } else {
-            return Response.success("No comments.");
+            throw new SocialAppException("This posts is private.");
         }
     }
 
@@ -93,6 +99,9 @@ public class CommentServiceImpl implements CommentService {
     public Response updateComment(Long commentId, CommentRequestDTO requestDTO){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
+        if (comment != null) {
+            comment.setContent(requestDTO.getContent());
+        }
         commentRepository.save(comment);
         return Response.success("Updated comment successfully.");
     }

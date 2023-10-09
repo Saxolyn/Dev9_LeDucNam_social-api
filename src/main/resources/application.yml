@@ -29,7 +29,7 @@ social:
       value: Authorization
       prefix: Bearer
     secret: kyrios
-    expiration: 3600000
+    expiration: 18000000
 #Logging properties
 logging:
   level:

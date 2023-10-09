@@ -10,7 +10,7 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     public void deleteByPostId(Long postId);
 
-    public List<Comment> getAllByPostId(Long postId);
+    public List<Comment> getAllByPostIdOrderByLastModifiedDate(Long postId);
 
     public int countByPostId(Long postId);
 }

@@ -1,6 +1,7 @@
 package com.social.socialserviceapp.controller;
 
 import com.social.socialserviceapp.result.Response;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class HomeController {
 
     @GetMapping("/test")
     @PreAuthorize("hasRole('USER')")
+    @Hidden
     public ResponseEntity<?> home(){
         return ResponseEntity.ok(new Response()
                 .withMessage("Hello User"));
@@ -24,6 +26,7 @@ public class HomeController {
 
     @GetMapping("/test-admin")
     @PreAuthorize("hasRole('ADMIN')")
+    @Hidden
     public ResponseEntity<?> home2(){
         return ResponseEntity.ok(new Response()
                 .withMessage("Hello Admin"));
