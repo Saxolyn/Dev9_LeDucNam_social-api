@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -18,6 +20,6 @@ public class FriendRequestsResponseDTO {
     private String username;
     private String realName;
     @JsonProperty(value = "wasSentOn")
-    private String sendOn;
+    private LocalDateTime sendOn;
 
 }

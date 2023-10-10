@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    public Friend findFriendByBaseUserIdAndAndOtherUserId(Long baseUserId, Long otherUserId);
+    public Friend findFriendByBaseUserIdAndOtherUserId(Long baseUserId, Long otherUserId);
 
     public List<Friend> getFriendsByOtherUserIdAndStatusOrderBySentOn(Long userId, FriendStatus status);
 
@@ -31,5 +31,12 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     public Friend findFriendByBaseUserIdAndAndOtherUserIdAndStatus(Long baseUserId, Long otherUserId,
                                                                    FriendStatus status);
+
+    @Query(value = "SELECT * FROM friends f " +
+            "WHERE f.base_user_id = :baseUserId AND f.other_user_id = :otherUserId " +
+            "UNION ALL " +
+            "SELECT * FROM friends f WHERE f.base_user_id = :otherUserId AND f.other_user_id = :baseUserId",
+            nativeQuery = true)
+    public Friend findFriendByBaseUserIdAndOtherUserIdCustom(Long baseUserId, Long otherUserId);
 
 }

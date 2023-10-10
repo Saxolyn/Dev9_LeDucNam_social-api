@@ -6,9 +6,12 @@ import com.social.socialserviceapp.mapper.ProfileMapper;
 import com.social.socialserviceapp.model.dto.request.UpdateInformationRequestDTO;
 import com.social.socialserviceapp.model.dto.response.MyInfoResponseDTO;
 import com.social.socialserviceapp.model.entities.Profile;
+import com.social.socialserviceapp.model.entities.User;
 import com.social.socialserviceapp.repository.ProfileRepository;
+import com.social.socialserviceapp.repository.UserRepository;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.ProfileService;
+import com.social.socialserviceapp.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -39,28 +42,27 @@ public class ProfileServiceImpl implements ProfileService {
     private ProfileMapper profileMapper;
 
     @Autowired
-    private ResourceLoader resourceLoader;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    private UserRepository userRepository;
 
     @Override
     public Response updateInformation(UpdateInformationRequestDTO requestDTO,
-                                      MultipartFile multipartFile) throws IOException{
+                                      MultipartFile multipartFile) throws IOException {
         Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO);
-        profile.setAvatar(handleImageUpload(multipartFile));
+        if (multipartFile != null) {
+            profile.setAvatar(handleImageUpload(multipartFile));
+        }
         profileRepository.save(profile);
         return Response.success("Updated information successfully");
     }
 
     @Override
-    public ResponseEntity showAvatar() throws IOException{
+    public ResponseEntity<?> showAvatar() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         Profile profile = profileRepository.findProfileByLastModifiedBy(username);
         if (profile == null) {
-            throw new NotFoundException("Profile not found.");
+            throw new NotFoundException(Constants.RESPONSE_MESSAGE.PROFILE_NOT_FOUND);
         } else {
             try {
                 Path folder = Paths.get("src/main/resources/file_upload");
@@ -77,13 +79,13 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response showMyInfo(){
+    public Response showMyInfo() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         Profile profile = profileRepository.findProfileByLastModifiedBy(username);
         if (profile == null) {
-            throw new NotFoundException("Profile not found.");
+            throw new NotFoundException(Constants.RESPONSE_MESSAGE.PROFILE_NOT_FOUND);
         } else {
             MyInfoResponseDTO responseDTO = profileMapper.covertProfileToMyInfoResponseDTO(profile);
             return Response.success("Show information.")
@@ -91,4 +93,17 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    @Override
+    public Response showOtherInfo(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
+        Profile profile = profileRepository.findProfileByLastModifiedBy(user.getUsername());
+        if (profile == null) {
+            throw new NotFoundException(Constants.RESPONSE_MESSAGE.PROFILE_NOT_FOUND);
+        } else {
+            MyInfoResponseDTO responseDTO = profileMapper.covertProfileToMyInfoResponseDTO(profile);
+            return Response.success("Show information.")
+                    .withData(responseDTO);
+        }
+    }
 }

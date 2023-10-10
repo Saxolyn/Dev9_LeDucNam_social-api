@@ -24,7 +24,8 @@ public class Constants {
         public static final String RESET_PASSWORD_SUCCESS = "Reset password successfully.";
         public static final String USER_NOT_FOUND = "User not found";
         public static final String MODEL_MAPPER_ERROR = "ModelMapper mapping errors";
-
-        public static final String ALREADY_FRIEND = "U guys already friends, so u can't send a friend request again.";
+        public static final String ALREADY_FRIEND_SEND_REQUEST = "U guys already friends, so u can't send a friend request again.";
+        public static final String ALREADY_FRIEND_ACCEPT_REQUEST = "U guys already friends, so u can't accept a friend request again.";
+        public static final String PROFILE_NOT_FOUND = "Profile not found.";
     }
 }

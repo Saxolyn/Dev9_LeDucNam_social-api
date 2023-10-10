@@ -14,9 +14,11 @@ public interface ProfileService {
     public Response updateInformation(UpdateInformationRequestDTO requestDTO,
                                       MultipartFile multipartFile) throws IOException;
 
-    public ResponseEntity showAvatar() throws IOException;
+    public ResponseEntity<?> showAvatar() throws IOException;
 
     public Response showMyInfo();
+
+    public Response showOtherInfo(Long userId);
 
 
 }

@@ -59,7 +59,7 @@ public class FriendController {
         return friendService.searchFriend(username);
     }
 
-    @GetMapping("/my-friends")
+    @GetMapping("/")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response showMyFriends(){
         return friendService.showMyFriends();

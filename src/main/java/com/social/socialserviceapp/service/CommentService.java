@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 public interface CommentService {
 
     public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO);
-
     public Response showComments(Long postId);
-
     public Response deleteComment(Long commentId);
+    public Response updateComment(Long commentId, CommentRequestDTO requestDTO);
 
-    public Response updateComment(Long commentId, CommentRequestDTO requestDTOO);
+
+
 }

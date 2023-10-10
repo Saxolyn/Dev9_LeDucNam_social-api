@@ -41,39 +41,38 @@ public class FriendServiceImpl implements FriendService {
     @Autowired
     private FriendMapper friendMapper;
 
+    /**
+     * @param userId
+     * @return
+     */
     @Override
-    public Response sendARequest(Long userId){
+    public Response sendARequest(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Friend friend = friendRepository.findFriendByBaseUserIdAndAndOtherUserId(user.getId(), userId);
+        Friend friend = friendRepository.findFriendByBaseUserIdAndOtherUserId(user.getId(), userId);
         if (userId.equals(user.getId())) {
             throw new SocialAppException("What is wrong with u? U can't send a friend request for urself.");
         } else {
-            Friend friendCheck = friendRepository.findFriendByBaseUserIdAndAndOtherUserId(userId, user.getId());
-            if (friendCheck != null) {
-                if (FriendStatus.ACCEPTED.equals(friendCheck.getStatus())) {
-                    throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_FRIEND);
+            Friend friendCheck = friendRepository.findFriendByBaseUserIdAndOtherUserId(userId, user.getId());
+            if (friend == null && friendCheck == null) {
+                friend = Friend.builder()
+                        .baseUserId(user.getId())
+                        .otherUserId(userId)
+                        .status(FriendStatus.PENDING)
+                        .sentOn(LocalDateTime.now())
+                        .build();
+            } else {
+                if (friend != null && FriendStatus.PENDING.equals(friend.getStatus())) {
+                    throw new SocialAppException("U have already sent a friend request.");
+                } else if (friend != null && FriendStatus.ACCEPTED.equals(
+                        friend.getStatus()) || FriendStatus.ACCEPTED.equals(friendCheck.getStatus())) {
+                    throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_FRIEND_SEND_REQUEST);
                 } else {
                     throw new SocialAppException(
                             friendCheck.getCreatedBy() + " has sent a friend request, plz accept it.");
-                }
-            } else {
-                if (friend == null) {
-                    friend = Friend.builder()
-                            .baseUserId(user.getId())
-                            .otherUserId(userId)
-                            .status(FriendStatus.PENDING)
-                            .sentOn(LocalDateTime.now())
-                            .build();
-                } else {
-                    if (FriendStatus.PENDING.equals(friend.getStatus())) {
-                        throw new SocialAppException("U have already sent a friend request.");
-                    } else {
-                        throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_FRIEND);
-                    }
                 }
             }
         }
@@ -82,7 +81,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response friendRequests(){
+    public Response friendRequests() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -99,7 +98,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response searchFriend(String realName){
+    public Response searchFriend(String realName) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -112,23 +111,31 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response cancelARequest(Long userId){
+    public Response cancelARequest(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Friend friend = friendRepository.findFriendByBaseUserIdAndAndOtherUserId(user.getId(), userId);
+        Friend friend = friendRepository.findFriendByBaseUserIdAndAndOtherUserIdAndStatus(user.getId(), userId,
+                FriendStatus.PENDING);
         if (friend != null) {
             friendRepository.delete(friend);
-            return Response.success("Canceled a friend request successfully.");
+            return Response.success("Canceled a send request successfully.");
         } else {
-            throw new SocialAppException("Canceling ur friend request failed.");
+            Friend friendCheck = friendRepository.findFriendByBaseUserIdAndAndOtherUserIdAndStatus(userId, user.getId(),
+                    FriendStatus.PENDING);
+            if (friendCheck != null) {
+                friendRepository.delete(friendCheck);
+                return Response.success("Deleted a friend request successfully.");
+            } else {
+                throw new SocialAppException("Failed to execute a request.");
+            }
         }
     }
 
     @Override
-    public Response sendRequests(){
+    public Response sendRequests() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -144,24 +151,29 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response acceptARequest(Long userId){
+    public Response acceptARequest(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Friend friend = friendRepository.findFriendByBaseUserIdAndAndOtherUserId(userId, user.getId());
+        Friend friend = friendRepository.findFriendByBaseUserIdAndOtherUserId(userId, user.getId());
         if (friend != null) {
-            friend.setStatus(FriendStatus.ACCEPTED);
-            friendRepository.save(friend);
-            return Response.success("Accepted a friend request successfully.");
+            if (friend.getStatus()
+                    .equals(FriendStatus.ACCEPTED)) {
+                throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_FRIEND_ACCEPT_REQUEST);
+            } else {
+                friend.setStatus(FriendStatus.ACCEPTED);
+                friendRepository.save(friend);
+                return Response.success("Accepted a friend request successfully.");
+            }
         } else {
             throw new SocialAppException("Accepting ur friend request failed.");
         }
     }
 
     @Override
-    public Response showMyFriends(){
+    public Response showMyFriends() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -179,19 +191,18 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response unFriend(Long userId){
+    public Response unFriend(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Friend friend = friendRepository.findFriendByBaseUserIdAndAndOtherUserId(user.getId(), userId);
+        Friend friend = friendRepository.findFriendByBaseUserIdAndOtherUserIdCustom(user.getId(), userId);
         if (friend != null) {
             User findOtherUser = userRepository.findById(userId)
                     .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
             if (FriendStatus.ACCEPTED.equals(friend.getStatus())) {
-                friend.setStatus(FriendStatus.UN_FRIEND);
-                friendRepository.save(friend);
+                friendRepository.delete(friend);
                 return Response.success(findOtherUser.getUsername() + " is no longer your friend.");
             } else {
                 throw new SocialAppException("U can't unfriend, " + findOtherUser.getUsername() + " isn't ur friend.");

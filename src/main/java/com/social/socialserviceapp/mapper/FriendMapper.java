@@ -5,7 +5,6 @@ import com.social.socialserviceapp.model.dto.response.FriendRequestsResponseDTO;
 import com.social.socialserviceapp.model.dto.response.SentRequestsResponseDTO;
 import com.social.socialserviceapp.model.dto.response.ShowMyFriendsResponseDTO;
 import com.social.socialserviceapp.model.entities.Friend;
-import com.social.socialserviceapp.model.entities.Profile;
 import com.social.socialserviceapp.model.entities.User;
 import com.social.socialserviceapp.repository.ProfileRepository;
 import com.social.socialserviceapp.repository.UserRepository;
@@ -28,16 +27,13 @@ public class FriendMapper {
     @Autowired
     private UserRepository userRepository;
 
-    public List<FriendRequestsResponseDTO> convertFriendLstToFriendRequestsDTOLst(List<Friend> friends){
+    public List<FriendRequestsResponseDTO> convertFriendLstToFriendRequestsDTOLst(List<Friend> friends) {
         try {
             return friends.stream()
                     .map(friend -> {
                         if (modelMapper.getTypeMap(Friend.class, FriendRequestsResponseDTO.class) == null) {
                             modelMapper.createTypeMap(friend, FriendRequestsResponseDTO.class)
                                     .setPostConverter(converter -> {
-                                        Profile profile = profileRepository.findProfileByLastModifiedBy(
-                                                converter.getSource()
-                                                        .getLastModifiedBy());
                                         converter.getDestination()
                                                 .setUsername(converter.getSource()
                                                         .getCreatedBy());
@@ -45,7 +41,8 @@ public class FriendMapper {
                                                 .setUserId(converter.getSource()
                                                         .getBaseUserId());
                                         converter.getDestination()
-                                                .setRealName(profile.getRealName());
+                                                .setSendOn(converter.getSource()
+                                                        .getSentOn());
                                         return converter.getDestination();
                                     });
                         }
@@ -58,7 +55,7 @@ public class FriendMapper {
         }
     }
 
-    public List<SentRequestsResponseDTO> convertFriendLstToSendRequestsDTOLst(List<Friend> friends){
+    public List<SentRequestsResponseDTO> convertFriendLstToSendRequestsDTOLst(List<Friend> friends) {
         try {
             return friends.stream()
                     .map(friend -> {
@@ -68,8 +65,6 @@ public class FriendMapper {
                                         User user = userRepository.findById(converter.getSource()
                                                         .getOtherUserId())
                                                 .orElseThrow(() -> new NotFoundException("User not found."));
-//                                        Profile profile = profileRepository.findProfileByLastModifiedBy(
-//                                                user.getUsername());
                                         converter.getDestination()
                                                 .setUsername(user.getUsername());
                                         converter.getDestination()
@@ -78,8 +73,6 @@ public class FriendMapper {
                                         converter.getDestination()
                                                 .setSendOn(converter.getSource()
                                                         .getSentOn());
-//                                        converter.getDestination()
-//                                                .setRealName(profile.getRealName());
                                         return converter.getDestination();
                                     });
                         }
@@ -93,7 +86,7 @@ public class FriendMapper {
     }
 
     public List<ShowMyFriendsResponseDTO> convertFriendLstToMyFriendsResponseDTOLst(List<Friend> friends, Long userId,
-                                                                                    String username){
+                                                                                    String username) {
         return friends.stream()
                 .map(friend -> {
                     Long modifiedUserId = friend.getBaseUserId()

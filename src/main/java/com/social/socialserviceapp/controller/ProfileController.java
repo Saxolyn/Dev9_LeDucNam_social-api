@@ -24,26 +24,31 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
-    @PostMapping(value = "/update-information", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(description = "aduchat")
     public Response updateInformation(UpdateInformationRequestDTO requestDTO,
-                                      @RequestPart(value = "avatar", required = false)
-                                      MultipartFile multipartFile) throws IOException{
+                                      @RequestPart(value = "avatar", required = false) MultipartFile multipartFile) throws IOException {
         return profileService.updateInformation(requestDTO, multipartFile);
     }
 
-    @GetMapping(value = "/my-avatar")
+    @GetMapping(value = "/avatar")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(description = "aduchat")
-    public ResponseEntity<?> showAvatar() throws IOException{
+    public ResponseEntity<?> showAvatar() throws IOException {
         return profileService.showAvatar();
     }
 
-    @GetMapping("/my-info")
+    @GetMapping("/")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public Response myInfo(){
+    public Response myInfo() {
         return profileService.showMyInfo();
+    }
+
+    @GetMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public Response showOtherInfo(@PathVariable Long userId) {
+        return profileService.showOtherInfo(userId);
     }
 
 }

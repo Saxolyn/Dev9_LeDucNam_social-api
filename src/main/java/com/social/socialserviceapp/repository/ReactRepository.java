@@ -10,4 +10,8 @@ public interface ReactRepository extends JpaRepository<React, Long> {
     public React findByPostIdAndLastModifiedBy(Long postId, String username);
 
     public int countByPostIdAndAndStatus(Long postId, ReactStatus status);
+
+    public React findByCommentIdAndLastModifiedBy(Long postId, String username);
+
+    public int countByCommentIdAndStatus(Long commentId, ReactStatus status);
 }

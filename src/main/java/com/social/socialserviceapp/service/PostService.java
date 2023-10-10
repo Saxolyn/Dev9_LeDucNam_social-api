@@ -9,9 +9,14 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface PostService {
 
-    public Response createOrEditAPost(PostStatus status, Long id, String content,
-                                      MultipartFile[] multipartFiles);
+    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles);
+
     public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO);
+
     public Response deleteAPost(Long postId);
+
+    public Response showOtherPost(Long userId);
+
+    public Response showAllPosts(int offset, int limit);
 
 }

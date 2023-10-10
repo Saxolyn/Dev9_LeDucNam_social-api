@@ -8,4 +8,6 @@ public interface ReactService {
 
     public Response likeOrUnlikeAPost(Long postId);
 
+    public Response likeOrUnlikeAComment(Long commentId);
+
 }
