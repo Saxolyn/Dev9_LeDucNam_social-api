@@ -1,6 +1,5 @@
 package com.social.socialserviceapp.model.dto.response;
 
-import com.social.socialserviceapp.model.enums.PostStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +18,7 @@ public class ShowMyPostResponseDTO {
     private List<String> images;
     private int likes;
     private int comments;
-    private PostStatus status;
+//    private PostStatus status;
     private String createdBy;
     private String createdDate;
     private String lastModifiedBy;

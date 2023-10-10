@@ -28,4 +28,5 @@ public class Post extends BaseEntity {
     @Column
     private PostStatus status;
 
+
 }

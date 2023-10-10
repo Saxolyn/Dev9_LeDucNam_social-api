@@ -48,7 +48,7 @@ public class PostServiceImpl implements PostService {
     private UserRepository userRepository;
 
     @Override
-    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles) {
+    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles){
         Post post = null;
         if (id == null) {
             post = new Post();
@@ -92,7 +92,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO) {
+    public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -113,7 +113,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response deleteAPost(Long postId) {
+    public Response deleteAPost(Long postId){
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Post not found."));
         postRepository.delete(post);
@@ -122,7 +122,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showOtherPost(Long userId) {
+    public Response showOtherPost(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
         List<Post> posts = postRepository.findAllByCreatedByAndStatus(user.getUsername(), PostStatus.PUBLIC);
@@ -135,17 +135,22 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showAllPosts(int offset, int limit) {
+    public Response showAllPosts(int offset, int limit){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("createdDate"));
-        return Response.success("adu")
-                .withData(postRepository.getAllFriendPostsByUserIdAndFriendStatus(user.getId(), FriendStatus.ACCEPTED,
-                                pageable)
-                        .getContent());
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("createdDate")
+                .descending());
+        List<Post> posts = postRepository.getAllFriendPostsByUserIdAndFriendStatus(user.getId(), FriendStatus.ACCEPTED,
+                        pageable)
+                .getContent();
+        if (!CommonUtil.isNullOrEmpty(posts)) {
+            return Response.success("Show all friend posts.")
+                    .withData(postMapper.convertPostToShowMyPostResponseDTO(posts));
+        }
+        return Response.success("No posts.");
     }
 
 

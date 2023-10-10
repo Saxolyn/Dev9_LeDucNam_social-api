@@ -46,13 +46,12 @@ public class PostMapper {
                         .images(CommonUtil.toList(post.getImages(), ","))
                         .likes(reactRepository.countByPostIdAndAndStatus(post.getId(), ReactStatus.LIKE))
                         .comments(commentRepository.countByPostId(post.getId()))
-                        .status(post.getStatus())
+//                        .status(post.getStatus())
                         .createdBy(post.getCreatedBy())
                         .createdDate(String.valueOf(post.getCreatedDate()))
                         .lastModifiedBy(post.getLastModifiedBy())
                         .lastModifiedDate(String.valueOf(post.getLastModifiedDate()))
                         .build()));
-
         return responseDTOS;
     }
 }
