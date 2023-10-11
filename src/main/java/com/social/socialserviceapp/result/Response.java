@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -16,6 +17,7 @@ public class Response {
     private String type;
     private int status;
     private String message;
+    private List<ValidationError> validationErrors;
     private Object data;
     private String cause;
     private String path;
@@ -33,8 +35,18 @@ public class Response {
         this.path = path;
     }
 
-    public Response(Object data, String cause, String path) {
-        this.data = data;
+    public Response(String type, int status, String message,List<ValidationError> validationErrors, String cause, String path) {
+        this.timestamp = Instant.now().toString();
+        this.type = type;
+        this.status = status;
+        this.message = message;
+        this.validationErrors = validationErrors;
+        this.cause = cause;
+        this.path = path;
+    }
+
+    public Response(List<ValidationError> validationErrors, String cause, String path) {
+        this.validationErrors = validationErrors;
         this.cause = cause;
         this.path = path;
     }

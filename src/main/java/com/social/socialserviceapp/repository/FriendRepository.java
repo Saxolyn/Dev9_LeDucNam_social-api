@@ -39,4 +39,11 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             nativeQuery = true)
     public Friend findFriendByBaseUserIdAndOtherUserIdCustom(Long baseUserId, Long otherUserId);
 
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM friends f " +
+            "WHERE f.last_modified_date >= NOW() - INTERVAL 1 WEEK " +
+            "AND f.last_modified_date < NOW() " +
+            "AND f.created_by = ?1",nativeQuery = true)
+    public int countFriendsLastWeekByCreatedBy(String createdBy);
+
 }

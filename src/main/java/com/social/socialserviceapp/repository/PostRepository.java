@@ -28,4 +28,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "WHERE f.baseUserId = ?1 AND f.status = ?2")
     Page<Post> getAllFriendPostsByUserIdAndFriendStatus(Long baseUserId, FriendStatus status, Pageable pageable);
 
+    @Query(value = "SELECT COUNT(*) " +
+            "FROM posts p " +
+            "WHERE p.created_date >= NOW() - INTERVAL 1 WEEK " +
+            "AND p.created_date < NOW() " +
+            "AND p.created_by = ?1",nativeQuery = true)
+    public int countPostsLastWeekByCreatedBy(String createdBy);
+
 }
