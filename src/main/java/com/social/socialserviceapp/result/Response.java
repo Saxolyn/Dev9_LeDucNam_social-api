@@ -17,7 +17,7 @@ public class Response {
     private String type;
     private int status;
     private String message;
-    private List<ValidationError> validationErrors;
+    private String errors;
     private Object data;
     private String cause;
     private String path;
@@ -26,7 +26,8 @@ public class Response {
     }
 
     public Response(String type, int status, String message, Object data, String cause, String path) {
-        this.timestamp = Instant.now().toString();
+        this.timestamp = Instant.now()
+                .toString();
         this.type = type;
         this.status = status;
         this.message = message;
@@ -35,21 +36,26 @@ public class Response {
         this.path = path;
     }
 
-    public Response(String type, int status, String message,List<ValidationError> validationErrors, String cause, String path) {
-        this.timestamp = Instant.now().toString();
+    public Response(String type, int status, String message, String errors, String cause, String path) {
+        this.timestamp = Instant.now()
+                .toString();
         this.type = type;
         this.status = status;
         this.message = message;
-        this.validationErrors = validationErrors;
+        this.errors = errors;
         this.cause = cause;
         this.path = path;
     }
 
-    public Response(List<ValidationError> validationErrors, String cause, String path) {
-        this.validationErrors = validationErrors;
-        this.cause = cause;
-        this.path = path;
-    }
+//    public Response(Object data, String cause, String path) {
+//        this.timestamp = Instant.now()
+//                .toString();
+//        this.status = HttpStatus.BAD_REQUEST.value();
+//        this.type = Constants.RESPONSE_TYPE.WARNING;
+//        this.data = data;
+//        this.cause = cause;
+//        this.path = path;
+//    }
 
     public Response(String type, int status) {
         this.type = type;

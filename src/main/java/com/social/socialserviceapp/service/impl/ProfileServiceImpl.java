@@ -45,8 +45,13 @@ public class ProfileServiceImpl implements ProfileService {
     private UserRepository userRepository;
 
     @Override
-    public Response updateInformation(UpdateInformationRequestDTO requestDTO,
+    public Response updateInformation(String realName, String birthDate, String occupation, String livePlace,
                                       MultipartFile multipartFile) throws IOException {
+        UpdateInformationRequestDTO requestDTO = new UpdateInformationRequestDTO();
+        requestDTO.setRealName(realName);
+        requestDTO.setBirthDate(birthDate);
+        requestDTO.setOccupation(occupation);
+        requestDTO.setLivePlace(livePlace);
         Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO);
         if (multipartFile != null) {
             profile.setAvatar(handleImageUpload(multipartFile));
@@ -106,4 +111,5 @@ public class ProfileServiceImpl implements ProfileService {
                     .withData(responseDTO);
         }
     }
+
 }

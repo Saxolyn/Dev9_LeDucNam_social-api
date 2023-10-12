@@ -11,7 +11,7 @@ import java.io.IOException;
 @Service
 public interface ProfileService {
 
-    public Response updateInformation(UpdateInformationRequestDTO requestDTO,
+    public Response updateInformation(String realName, String birthDate, String occupation, String livePlace,
                                       MultipartFile multipartFile) throws IOException;
 
     public ResponseEntity<?> showAvatar() throws IOException;
@@ -19,6 +19,5 @@ public interface ProfileService {
     public Response showMyInfo();
 
     public Response showOtherInfo(Long userId);
-
 
 }

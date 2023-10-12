@@ -43,3 +43,6 @@ token:
   password:
     reset:
       duration: 3600000
+server:
+  error:
+    include-stacktrace: never

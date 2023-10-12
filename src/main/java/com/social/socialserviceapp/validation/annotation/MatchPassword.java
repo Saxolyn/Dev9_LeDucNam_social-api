@@ -1,19 +1,18 @@
 package com.social.socialserviceapp.validation.annotation;
 
-import com.social.socialserviceapp.validation.validator.EmailExistsValidator;
-import com.social.socialserviceapp.validation.validator.UsernameExistsValidator;
+import com.social.socialserviceapp.validation.validator.MatchPasswordValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
-@Target(ElementType.FIELD)
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = EmailExistsValidator.class)
+@Constraint(validatedBy = MatchPasswordValidator.class)
 @Documented
-public @interface EmailExists {
+public @interface MatchPassword {
 
-    String message() default "Email already exists.";
+    String message() default "[password] and [rePassword] not match.";
 
     Class<?>[] groups() default {};
 
