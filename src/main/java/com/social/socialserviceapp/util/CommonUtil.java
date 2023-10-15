@@ -3,11 +3,11 @@ package com.social.socialserviceapp.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 public class CommonUtil {
 
@@ -64,10 +64,6 @@ public class CommonUtil {
         return (data == null || data.isEmpty());
     }
 
-    public static boolean isNullOrEmpty(Collection data){
-        return (data == null || data.isEmpty());
-    }
-
     public static boolean isNullOrEmpty(String str){
         return (str == null || str.trim()
                 .isEmpty());
@@ -83,32 +79,6 @@ public class CommonUtil {
 
     public static String NVL(String value){
         return NVL(value, "");
-    }
-
-    public static Date addDate(Date date, int amount){
-        Calendar c = Calendar.getInstance();
-        c.setTime(date);
-        c.add(Calendar.DATE, amount);
-        date = c.getTime();
-        return date;
-    }
-
-    public static String encodeFileToBase64(File file){
-        try {
-            byte[] fileContent = java.nio.file.Files.readAllBytes(file.toPath());
-            return Base64.getEncoder()
-                    .encodeToString(fileContent);
-        } catch (IOException e) {
-            throw new IllegalStateException("could not read file " + file, e);
-        }
-    }
-
-    public static File writeBytesToFile(String fileOutput, byte[] bytes) throws IOException{
-        File f = new File(fileOutput);
-        try (FileOutputStream fos = new FileOutputStream(f)) {
-            fos.write(bytes);
-            return f;
-        }
     }
 
     public static String generateRandomUuid(){

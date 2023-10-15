@@ -13,6 +13,7 @@ import com.social.socialserviceapp.repository.PostRepository;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.CommentService;
 import com.social.socialserviceapp.util.CommonUtil;
+import com.social.socialserviceapp.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,16 +38,11 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO){
-        try {
-            Post post = postRepository.findById(postId)
-                    .orElseThrow(() -> new NotFoundException("Posts not found."));
-            Comment comment = getComment(requestDTO, post);
-            commentRepository.save(comment);
-            return Response.success("Comment on a post successfully.");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
+        Comment comment = getComment(requestDTO, post);
+        commentRepository.save(comment);
+        return Response.success(Constants.RESPONSE_MESSAGE.COMMENT_SUCCESSFULLY);
     }
 
     private Comment getComment(CommentRequestDTO requestDTO, Post post){
@@ -71,7 +67,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Response showComments(Long postId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Post not found."));
+                .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
         if (PostStatus.PUBLIC.equals(post.getStatus())) {
             List<Comment> comments = commentRepository.getAllByPostIdOrderByLastModifiedDate(postId);
             if (!CommonUtil.isNullOrEmpty(comments)) {
@@ -89,17 +85,29 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Response deleteComment(Long commentId){
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
-        commentRepository.delete(comment);
+        if (!username.equals(comment.getCreatedBy())) {
+            throw new SocialAppException("This is not ur comment, so u can't delete.");
+        } else {
+            commentRepository.delete(comment);
+        }
         return Response.success("Deleted comment successfully.");
     }
 
     @Override
     public Response updateComment(Long commentId, CommentRequestDTO requestDTO){
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
-        if (comment != null) {
+        if (!username.equals(comment.getCreatedBy())) {
+            throw new SocialAppException("This is not ur comment, so u can't edit.");
+        } else {
             comment.setContent(requestDTO.getContent());
         }
         commentRepository.save(comment);

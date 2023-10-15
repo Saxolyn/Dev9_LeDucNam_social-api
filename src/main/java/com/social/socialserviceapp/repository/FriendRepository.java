@@ -14,7 +14,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     public Friend findFriendByBaseUserIdAndOtherUserId(Long baseUserId, Long otherUserId);
 
-    public List<Friend> getFriendsByOtherUserIdAndStatusOrderBySentOn(Long userId, FriendStatus status);
+    public List<Friend> getFriendsByOtherUserIdAndStatusOrderByCreatedDate(Long userId, FriendStatus status);
 
     public List<Friend> getFriendsByBaseUserIdAndStatus(Long userId, FriendStatus status);
 

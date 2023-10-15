@@ -1,5 +1,6 @@
 package com.social.socialserviceapp.security;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-
+@Data
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;

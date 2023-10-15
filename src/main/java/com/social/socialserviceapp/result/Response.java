@@ -17,15 +17,15 @@ public class Response {
     private String type;
     private int status;
     private String message;
-    private String errors;
+    private List<ValidationError> errors;
     private Object data;
     private String cause;
     private String path;
 
-    public Response() {
+    public Response(){
     }
 
-    public Response(String type, int status, String message, Object data, String cause, String path) {
+    public Response(String type, int status, String message, Object data, String cause, String path){
         this.timestamp = Instant.now()
                 .toString();
         this.type = type;
@@ -36,7 +36,7 @@ public class Response {
         this.path = path;
     }
 
-    public Response(String type, int status, String message, String errors, String cause, String path) {
+    public Response(String type, int status, String message, List<ValidationError> errors, String cause, String path){
         this.timestamp = Instant.now()
                 .toString();
         this.type = type;
@@ -47,35 +47,25 @@ public class Response {
         this.path = path;
     }
 
-//    public Response(Object data, String cause, String path) {
-//        this.timestamp = Instant.now()
-//                .toString();
-//        this.status = HttpStatus.BAD_REQUEST.value();
-//        this.type = Constants.RESPONSE_TYPE.WARNING;
-//        this.data = data;
-//        this.cause = cause;
-//        this.path = path;
-//    }
-
-    public Response(String type, int status) {
+    public Response(String type, int status){
         this.type = type;
         this.status = status;
     }
 
-    public static Response success(String message) {
+    public static Response success(String message){
         return new Response(Constants.RESPONSE_TYPE.SUCCESS, HttpStatus.OK.value(), message, null, null, null);
     }
 
-    public static Response success() {
+    public static Response success(){
         return new Response(Constants.RESPONSE_TYPE.SUCCESS, HttpStatus.OK.value());
     }
 
-    public Response withData(Object data) {
+    public Response withData(Object data){
         this.data = data;
         return this;
     }
 
-    public Response withMessage(String message) {
+    public Response withMessage(String message){
         this.message = message;
         return this;
     }

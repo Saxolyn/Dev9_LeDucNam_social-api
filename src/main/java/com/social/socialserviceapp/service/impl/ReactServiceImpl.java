@@ -12,6 +12,7 @@ import com.social.socialserviceapp.repository.PostRepository;
 import com.social.socialserviceapp.repository.ReactRepository;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.ReactService;
+import com.social.socialserviceapp.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,9 @@ public class ReactServiceImpl implements ReactService {
     private CommentRepository commentRepository;
 
     @Override
-    public Response likeOrUnlikeAPost(Long postId) {
+    public Response likeOrUnlikeAPost(Long postId){
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Post not found."));
+                .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -56,26 +57,26 @@ public class ReactServiceImpl implements ReactService {
     }
 
     @Override
-    public Response likeOrUnlikeAComment(Long commentId) {
+    public Response likeOrUnlikeAComment(Long commentId){
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         React react = reactRepository.findByCommentIdAndLastModifiedBy(commentId, username);
-        if (username.equals(comment.getCreatedBy())) {
-            if (react == null) {
-                react = React.builder()
-                        .commentId(comment.getId())
-                        .status(ReactStatus.LIKE)
-                        .build();
-            } else {
-                react.setStatus(react.getStatus()
-                        .equals(ReactStatus.LIKE) ? ReactStatus.UNLIKE : ReactStatus.LIKE);
-            }
+//        if (username.equals(comment.getCreatedBy())) {
+        if (react == null) {
+            react = React.builder()
+                    .commentId(comment.getId())
+                    .status(ReactStatus.LIKE)
+                    .build();
         } else {
-            throw new SocialAppException("This comment is private.");
+            react.setStatus(react.getStatus()
+                    .equals(ReactStatus.LIKE) ? ReactStatus.UNLIKE : ReactStatus.LIKE);
         }
+//        } else {
+//            throw new SocialAppException("This comment is private.");
+//        }
         reactRepository.save(react);
         return Response.success(username + " has " + react.getStatus()
                 .getReact() + " the comment.");

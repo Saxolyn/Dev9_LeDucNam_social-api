@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+//@ToString(exclude = "file")
 public class UpdateInformationRequestDTO {
 
     private String realName;
@@ -19,5 +19,8 @@ public class UpdateInformationRequestDTO {
     private String birthDate;
     private String occupation;
     private String livePlace;
+
+//    @RequestPart(value = "")
+//    private MultipartFile file;
 
 }

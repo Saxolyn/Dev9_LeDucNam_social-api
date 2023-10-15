@@ -11,7 +11,6 @@ import com.social.socialserviceapp.model.entities.Friend;
 import com.social.socialserviceapp.model.entities.User;
 import com.social.socialserviceapp.model.enums.FriendStatus;
 import com.social.socialserviceapp.repository.FriendRepository;
-import com.social.socialserviceapp.repository.NotificationRepository;
 import com.social.socialserviceapp.repository.ProfileRepository;
 import com.social.socialserviceapp.repository.UserRepository;
 import com.social.socialserviceapp.result.Response;
@@ -37,8 +36,6 @@ public class FriendServiceImpl implements FriendService {
     @Autowired
     private ProfileRepository profileRepository;
     @Autowired
-    private NotificationRepository notificationRepository;
-    @Autowired
     private FriendMapper friendMapper;
 
     /**
@@ -46,7 +43,8 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public Response sendARequest(Long userId) {
+    public Response sendARequest(Long userId){
+        validate(userId);
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -54,7 +52,7 @@ public class FriendServiceImpl implements FriendService {
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
         Friend friend = friendRepository.findFriendByBaseUserIdAndOtherUserId(user.getId(), userId);
         if (userId.equals(user.getId())) {
-            throw new SocialAppException("What is wrong with u? U can't send a friend request for urself.");
+            throw new SocialAppException(Constants.RESPONSE_MESSAGE.SEND_REQUEST_TO_YOURSELF);
         } else {
             Friend friendCheck = friendRepository.findFriendByBaseUserIdAndOtherUserId(userId, user.getId());
             if (friend == null && friendCheck == null) {
@@ -66,7 +64,7 @@ public class FriendServiceImpl implements FriendService {
                         .build();
             } else {
                 if (friend != null && FriendStatus.PENDING.equals(friend.getStatus())) {
-                    throw new SocialAppException("U have already sent a friend request.");
+                    throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_SEND_REQUEST);
                 } else if (friend != null && FriendStatus.ACCEPTED.equals(
                         friend.getStatus()) || FriendStatus.ACCEPTED.equals(friendCheck.getStatus())) {
                     throw new SocialAppException(Constants.RESPONSE_MESSAGE.ALREADY_FRIEND_SEND_REQUEST);
@@ -81,13 +79,13 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response friendRequests() {
+    public Response friendRequests(){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        List<Friend> friends = friendRepository.getFriendsByOtherUserIdAndStatusOrderBySentOn(user.getId(),
+        List<Friend> friends = friendRepository.getFriendsByOtherUserIdAndStatusOrderByCreatedDate(user.getId(),
                 FriendStatus.PENDING);
         if (!CommonUtil.isNullOrEmpty(friends)) {
             List<FriendRequestsResponseDTO> responseDTOS = friendMapper.convertFriendLstToFriendRequestsDTOLst(friends);
@@ -98,7 +96,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response searchFriend(String realName) {
+    public Response searchFriend(String realName){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -111,7 +109,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response cancelARequest(Long userId) {
+    public Response cancelARequest(Long userId){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -135,7 +133,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response sendRequests() {
+    public Response sendRequests(){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -151,7 +149,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response acceptARequest(Long userId) {
+    public Response acceptARequest(Long userId){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -173,7 +171,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response showMyFriends() {
+    public Response showMyFriends(){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -191,7 +189,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response unFriend(Long userId) {
+    public Response unFriend(Long userId){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -209,6 +207,14 @@ public class FriendServiceImpl implements FriendService {
             }
         } else {
             throw new SocialAppException("U failed to unfriend.");
+        }
+    }
+
+    private boolean validate(Long userId){
+        if (userRepository.existsUserById(userId)) {
+            return true;
+        } else {
+            throw new NotFoundException("This user wasn't found, so the request cannot be sent.");
         }
     }
 }

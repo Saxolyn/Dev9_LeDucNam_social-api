@@ -1,6 +1,5 @@
 package com.social.socialserviceapp.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.social.socialserviceapp.exception.NotFoundException;
 import com.social.socialserviceapp.mapper.ProfileMapper;
 import com.social.socialserviceapp.model.dto.request.UpdateInformationRequestDTO;
@@ -14,7 +13,6 @@ import com.social.socialserviceapp.service.ProfileService;
 import com.social.socialserviceapp.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,23 +42,14 @@ public class ProfileServiceImpl implements ProfileService {
     private UserRepository userRepository;
 
     @Override
-    public Response updateInformation(String realName, String birthDate, String occupation, String livePlace,
-                                      MultipartFile multipartFile) throws IOException {
-        UpdateInformationRequestDTO requestDTO = new UpdateInformationRequestDTO();
-        requestDTO.setRealName(realName);
-        requestDTO.setBirthDate(birthDate);
-        requestDTO.setOccupation(occupation);
-        requestDTO.setLivePlace(livePlace);
+    public Response updateInformation(UpdateInformationRequestDTO requestDTO){
         Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO);
-        if (multipartFile != null) {
-            profile.setAvatar(handleImageUpload(multipartFile));
-        }
         profileRepository.save(profile);
         return Response.success("Updated information successfully");
     }
 
     @Override
-    public ResponseEntity<?> showAvatar() {
+    public ResponseEntity<?> showAvatar(){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -70,11 +58,10 @@ public class ProfileServiceImpl implements ProfileService {
             throw new NotFoundException(Constants.RESPONSE_MESSAGE.PROFILE_NOT_FOUND);
         } else {
             try {
-                Path folder = Paths.get("src/main/resources/file_upload");
-                File fi = new File(folder.toAbsolutePath() + "/" + profile.getAvatar());
+                Path folder = Paths.get("src/main/resources/file_upload/", profile.getAvatar());
                 return ResponseEntity.ok()
                         .contentType(MediaType.IMAGE_PNG)
-                        .body(Files.readAllBytes(fi.toPath()));
+                        .body(Files.readAllBytes(folder));
             } catch (Exception ex) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +71,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response showMyInfo() {
+    public Response showMyInfo(){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -99,7 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response showOtherInfo(Long userId) {
+    public Response showOtherInfo(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
         Profile profile = profileRepository.findProfileByLastModifiedBy(user.getUsername());
@@ -112,4 +99,19 @@ public class ProfileServiceImpl implements ProfileService {
         }
     }
 
+    @Override
+    public Response uploadAvatar(MultipartFile multipartFile) throws IOException{
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+        Profile profile = profileRepository.findProfileByLastModifiedBy(username);
+        if (profile == null) {
+            profile = new Profile();
+        }
+        if (multipartFile != null) {
+            profile.setAvatar(handleImageUpload(multipartFile));
+        }
+        profileRepository.save(profile);
+        return Response.success("Uploaded avatar successfully.");
+    }
 }

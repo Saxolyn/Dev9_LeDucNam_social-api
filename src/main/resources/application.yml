@@ -20,8 +20,8 @@ spring:
     connect-timeout: 30
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: 200MB
+      max-request-size: 200MB
 #JWT properties
 social:
   jwt:

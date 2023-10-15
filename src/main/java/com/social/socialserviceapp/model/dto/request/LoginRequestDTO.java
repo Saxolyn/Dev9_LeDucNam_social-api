@@ -1,18 +1,20 @@
 package com.social.socialserviceapp.model.dto.request;
 
+import com.social.socialserviceapp.validation.annotation.NullOrBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LoginRequestDTO {
 
-    @NotNull(message = "[username] must not be null.")
-    @NotEmpty(message = "[username] must not be empty.")
+    @NullOrBlank(message = "[username] must not be null or blank")
     private String username;
 
-    @NotNull(message = "[password] must not be null.")
-    @NotEmpty(message = "[password] must not be empty.")
+    @NullOrBlank(message = "[password] must not be null or blank")
     private String password;
 }

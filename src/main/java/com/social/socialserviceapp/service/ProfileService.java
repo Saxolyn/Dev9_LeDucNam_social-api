@@ -11,13 +11,14 @@ import java.io.IOException;
 @Service
 public interface ProfileService {
 
-    public Response updateInformation(String realName, String birthDate, String occupation, String livePlace,
-                                      MultipartFile multipartFile) throws IOException;
+    public Response updateInformation(UpdateInformationRequestDTO requestDTO);
 
     public ResponseEntity<?> showAvatar() throws IOException;
 
     public Response showMyInfo();
 
     public Response showOtherInfo(Long userId);
+
+    public Response uploadAvatar(MultipartFile multipartFile) throws IOException;
 
 }

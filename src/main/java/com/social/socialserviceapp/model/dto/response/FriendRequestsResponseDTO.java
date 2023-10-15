@@ -20,6 +20,6 @@ public class FriendRequestsResponseDTO {
     private String username;
     private String realName;
     @JsonProperty(value = "wasSentOn")
-    private LocalDateTime sendOn;
+    private LocalDateTime createdDate;
 
 }

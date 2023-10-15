@@ -4,7 +4,6 @@ import com.social.socialserviceapp.model.dto.request.CommentRequestDTO;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.CommentService;
 import com.social.socialserviceapp.service.ReactService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,20 +21,6 @@ public class CommentController {
 
     @Autowired
     private ReactService reactService;
-
-    @PostMapping("/{postId}/post")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Hidden
-    public Response commentAPosts(@PathVariable Long postId, @RequestBody CommentRequestDTO requestDTO) {
-        return commentService.createACommentForPosts(postId, requestDTO);
-    }
-
-    @GetMapping("/{postId}/post")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    @Hidden
-    public Response showComments(@PathVariable Long postId) {
-        return commentService.showComments(postId);
-    }
 
     @DeleteMapping("/{commentId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")

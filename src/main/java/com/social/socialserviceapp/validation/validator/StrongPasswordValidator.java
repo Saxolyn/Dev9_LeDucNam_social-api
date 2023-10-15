@@ -4,21 +4,16 @@ import com.social.socialserviceapp.validation.annotation.StrongPassword;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class StrongPasswordValidator implements ConstraintValidator<StrongPassword, String> {
 
     @Override
-    public void initialize(StrongPassword constraintAnnotation) {
-        ConstraintValidator.super.initialize(constraintAnnotation);
+    public void initialize(StrongPassword constraintAnnotation){
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
-        Pattern pattern = Pattern.compile("^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$");
-        if (!pattern.matcher(value)
-                .find()) {
+    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext){
+        if (value != null && !value.matches("^(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$")) {
             return false;
         }
         return true;

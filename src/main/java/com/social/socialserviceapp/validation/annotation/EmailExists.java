@@ -1,7 +1,6 @@
 package com.social.socialserviceapp.validation.annotation;
 
 import com.social.socialserviceapp.validation.validator.EmailExistsValidator;
-import com.social.socialserviceapp.validation.validator.UsernameExistsValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -13,7 +12,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface EmailExists {
 
-    String message() default "Email already exists.";
+    String message() default "[email] already exists.";
 
     Class<?>[] groups() default {};
 

@@ -40,13 +40,12 @@ public class PostMapper {
     public List<ShowMyPostResponseDTO> convertPostToShowMyPostResponseDTO(List<Post> posts){
         List<ShowMyPostResponseDTO> responseDTOS = new ArrayList<>();
         posts.stream()
-                .forEach((post) -> responseDTOS.add(ShowMyPostResponseDTO.builder()
+                .forEach(post -> responseDTOS.add(ShowMyPostResponseDTO.builder()
                         .id(post.getId())
                         .content(post.getContent())
                         .images(CommonUtil.toList(post.getImages(), ","))
                         .likes(reactRepository.countByPostIdAndAndStatus(post.getId(), ReactStatus.LIKE))
                         .comments(commentRepository.countByPostId(post.getId()))
-//                        .status(post.getStatus())
                         .createdBy(post.getCreatedBy())
                         .createdDate(String.valueOf(post.getCreatedDate()))
                         .lastModifiedBy(post.getLastModifiedBy())

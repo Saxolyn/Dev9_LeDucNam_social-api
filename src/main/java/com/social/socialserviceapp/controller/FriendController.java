@@ -23,7 +23,7 @@ public class FriendController {
         return friendService.sendARequest(userId);
     }
 
-    @DeleteMapping("/cancel-request/{userId}")
+    @DeleteMapping("/{userId}/request")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public Response cancelARequest(@PathVariable Long userId){
         return friendService.cancelARequest(userId);

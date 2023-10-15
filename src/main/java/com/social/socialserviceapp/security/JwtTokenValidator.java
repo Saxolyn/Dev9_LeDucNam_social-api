@@ -35,7 +35,7 @@ public class JwtTokenValidator {
 
         } catch (ExpiredJwtException ex) {
             logger.error("Expired JWT token");
-            throw new InvalidTokenRequestException("JWT", authToken, "Token expired. Refresh required");
+            throw new InvalidTokenRequestException("JWT", authToken, "Token expired.");
 
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token");

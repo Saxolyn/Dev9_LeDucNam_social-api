@@ -9,14 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByCreatedBy(String createdBy, Pageable pageable);
 
-    List<Post> findAllByCreatedByAndStatus(String createdBy, PostStatus status);
+    Page<Post> findAllByCreatedByAndStatus(String createdBy, PostStatus status, Pageable pageable);
 
     @Query(value = "SELECT DISTINCT " +
             "p " +
@@ -32,7 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM posts p " +
             "WHERE p.created_date >= NOW() - INTERVAL 1 WEEK " +
             "AND p.created_date < NOW() " +
-            "AND p.created_by = ?1",nativeQuery = true)
+            "AND p.created_by = ?1", nativeQuery = true)
     public int countPostsLastWeekByCreatedBy(String createdBy);
 
 }

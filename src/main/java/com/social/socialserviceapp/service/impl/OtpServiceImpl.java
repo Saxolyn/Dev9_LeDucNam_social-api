@@ -34,7 +34,7 @@ import java.util.Random;
 @Service
 @Slf4j
 public class OtpServiceImpl implements OtpService {
-    private static final String DEFAULT_ALGORITHM = "SHA1PRNG";
+    private static String DEFAULT_ALGORITHM = "SHA1PRNG";
     private RedisUtil redisUtil;
     private AuthenticationManager authenticationManager;
     private JwtTokenProvider jwtTokenProvider;
@@ -42,7 +42,7 @@ public class OtpServiceImpl implements OtpService {
 
     @Autowired
     public OtpServiceImpl(RedisUtil redisUtil, AuthenticationManager authenticationManager,
-                          JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService) {
+                          JwtTokenProvider jwtTokenProvider, UserDetailsService userDetailsService){
         this.redisUtil = redisUtil;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -50,20 +50,20 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public int generateOTP() throws SocialAppException {
+    public int generateOTP() throws SocialAppException{
         int otp = 0;
         try {
-            Random random = SecureRandom.getInstance(DEFAULT_ALGORITHM);
+            Random random = SecureRandom.getInstance(getDefaultAlgorithm());
             otp = 100000 + random.nextInt(900000);
         } catch (NoSuchAlgorithmException e) {
             log.error("Invalid algorithm", e);
-//            throw new SocialAppException("Failed to generate Otp ", e.getMessage());
+            throw new SocialAppException(e.getMessage());
         }
         return otp;
     }
 
     @Override
-    public Response sendOTP(LoginRequestDTO requestDTO) throws SocialAppException {
+    public Response sendOTP(LoginRequestDTO requestDTO) throws SocialAppException{
         try {
             int otp = this.generateOTP();
             Authentication authentication = authenticationManager.authenticate(
@@ -73,7 +73,7 @@ public class OtpServiceImpl implements OtpService {
             if (authentication.isAuthenticated()) {
                 log.info("Otp: {}", otp);
                 redisUtil.setValue(requestDTO.getUsername(), otp);
-                return Response.success("The OTP is only valid for 30s")
+                return Response.success(Constants.RESPONSE_MESSAGE.OTP_VALID_30S)
                         .withData(LoginResponseDTO.builder()
                                 .otp(otp)
                                 .build());
@@ -85,7 +85,7 @@ public class OtpServiceImpl implements OtpService {
     }
 
     @Override
-    public Response verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException {
+    public Response verifyOtp(VerifyRequestDTO requestDTO) throws SocialAppException{
         Optional<String> cachedOtp = redisUtil.getValue(requestDTO.getUsername());
         if (cachedOtp.isPresent() && cachedOtp.get()
                 .equals(requestDTO.getOtp())) {
@@ -108,5 +108,13 @@ public class OtpServiceImpl implements OtpService {
             log.error(Constants.RESPONSE_MESSAGE.INVALID_OTP);
             throw new InvalidOtpException(Constants.RESPONSE_MESSAGE.INVALID_OTP.concat("!!!"));
         }
+    }
+
+    public static String getDefaultAlgorithm(){
+        return DEFAULT_ALGORITHM;
+    }
+
+    public static void setDefaultAlgorithm(String defaultAlgorithm){
+        DEFAULT_ALGORITHM = defaultAlgorithm;
     }
 }

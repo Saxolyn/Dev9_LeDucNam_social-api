@@ -3,7 +3,6 @@ package com.social.socialserviceapp.service.impl;
 import com.social.socialserviceapp.exception.NotFoundException;
 import com.social.socialserviceapp.exception.SocialAppException;
 import com.social.socialserviceapp.mapper.PostMapper;
-import com.social.socialserviceapp.model.dto.request.ShowMyPostRequestDTO;
 import com.social.socialserviceapp.model.dto.response.PostResponseDTO;
 import com.social.socialserviceapp.model.entities.Post;
 import com.social.socialserviceapp.model.entities.User;
@@ -53,16 +52,16 @@ public class PostServiceImpl implements PostService {
         if (id == null) {
             post = new Post();
             if (CommonUtil.isNullOrEmpty(content) && multipartFiles == null) {
-                throw new SocialAppException("Plz have at least 1 post or 1 image.");
+                throw new SocialAppException(Constants.RESPONSE_MESSAGE.CONTENT_AND_FILE_NULL);
             }
         } else {
             post = postRepository.findById(id)
-                    .orElseThrow(() -> new NotFoundException("Post not found."));
+                    .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
             String username = SecurityContextHolder.getContext()
                     .getAuthentication()
                     .getName();
             if (!username.equals(post.getCreatedBy())) {
-                throw new SocialAppException("Is not ur post.");
+                throw new SocialAppException(Constants.RESPONSE_MESSAGE.NOT_MINE_POST);
             }
         }
         if (!CommonUtil.isNullOrEmpty(content)) {
@@ -92,50 +91,65 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showMyPosts(ShowMyPostRequestDTO showMyPostRequestDTO){
+    public Response showMyPosts(int offset, int limit){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
-        if (showMyPostRequestDTO.getLimit() == 0) {
-            throw new IllegalArgumentException("Page size must not be less than one");
+        if (limit == 0) {
+            throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
         }
-        Pageable pageable = PageRequest.of(showMyPostRequestDTO.getOffSet(), showMyPostRequestDTO.getLimit(),
-                Sort.by("lastModifiedDate")
-                        .descending());
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("createdDate")
+                .descending());
         List<Post> posts = postRepository.findAllByCreatedBy(username, pageable)
                 .getContent();
         if (!CommonUtil.isNullOrEmpty(posts)) {
             return Response.success("Show my posts.")
                     .withData(postMapper.convertPostToShowMyPostResponseDTO(posts));
         } else {
-            return Response.success("No posts.");
+            return Response.success(Constants.RESPONSE_MESSAGE.NO_POST);
         }
     }
 
     @Override
     public Response deleteAPost(Long postId){
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Post not found."));
-        postRepository.delete(post);
-        commentRepository.deleteByPostId(postId);
-        return Response.success("Deleted post successfully.");
+                .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
+        if (username.equals(post.getCreatedBy())) {
+            postRepository.delete(post);
+            commentRepository.deleteByPostId(postId);
+            return Response.success(Constants.RESPONSE_MESSAGE.DELETE_POST_SUCCESSFULLY);
+        } else {
+            throw new SocialAppException(Constants.RESPONSE_MESSAGE.NOT_MINE_POST);
+        }
     }
 
     @Override
-    public Response showOtherPost(Long userId){
+    public Response showOtherPost(Long userId, int offset, int limit){
+        if (limit == 0) {
+            throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
+        }
+        Pageable pageable = PageRequest.of(offset, limit, Sort.by("createdDate")
+                .descending());
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        List<Post> posts = postRepository.findAllByCreatedByAndStatus(user.getUsername(), PostStatus.PUBLIC);
+        List<Post> posts = postRepository.findAllByCreatedByAndStatus(user.getUsername(), PostStatus.PUBLIC, pageable)
+                .getContent();
         if (!CommonUtil.isNullOrEmpty(posts)) {
             return Response.success("Show" + user.getUsername() + "posts.")
                     .withData(postMapper.convertPostToShowMyPostResponseDTO(posts));
         } else {
-            return Response.success("No posts.");
+            return Response.success(Constants.RESPONSE_MESSAGE.NO_POST);
         }
     }
 
     @Override
     public Response showAllPosts(int offset, int limit){
+        if (limit == 0) {
+            throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
+        }
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -149,8 +163,9 @@ public class PostServiceImpl implements PostService {
         if (!CommonUtil.isNullOrEmpty(posts)) {
             return Response.success("Show all friend posts.")
                     .withData(postMapper.convertPostToShowMyPostResponseDTO(posts));
+        } else {
+            return Response.success(Constants.RESPONSE_MESSAGE.NO_POST);
         }
-        return Response.success("No posts.");
     }
 
 

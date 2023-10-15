@@ -1,30 +1,32 @@
 package com.social.socialserviceapp.model.dto.request;
 
 import com.social.socialserviceapp.validation.annotation.EmailExists;
+import com.social.socialserviceapp.validation.annotation.NullOrBlank;
 import com.social.socialserviceapp.validation.annotation.StrongPassword;
 import com.social.socialserviceapp.validation.annotation.UsernameExists;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDTO {
 
-    @NotNull(message = "[username] must not be null.")
-    @NotEmpty(message = "[username] must not be empty.")
+    @NullOrBlank(message = "[username] must not be null or blank")
     @UsernameExists
     private String username;
 
-    @NotNull(message = "[email] must not be null.")
-    @NotEmpty(message = "[email] must not be empty.")
-    @Email
+    @NullOrBlank(message = "[email] must not be null or blank")
+    @Email()
     @EmailExists
     private String email;
 
-    @NotNull(message = "[password] must not be null.")
-    @NotEmpty(message = "[password] must not be empty.")
+    @NullOrBlank(message = "[password] must not be null or blank")
     @StrongPassword
     private String password;
 

@@ -27,5 +27,17 @@ public class Constants {
         public static final String ALREADY_FRIEND_SEND_REQUEST = "U guys already friends, so u can't send a friend request again.";
         public static final String ALREADY_FRIEND_ACCEPT_REQUEST = "U guys already friends, so u can't accept a friend request again.";
         public static final String PROFILE_NOT_FOUND = "Profile not found.";
+        public static final String SIGNUP_SUCCESSFULLY = "User registered successfully!!!";
+        public static final String OTP_VALID_30S = "The OTP is only valid for 60s";
+        public static final String TOKEN_VALID_1H = "This token only valid for 1h.";
+        public static final String NO_POST = "No posts.";
+        public static final String CONTENT_AND_FILE_NULL = "Plz have at least 1 post or 1 image.";
+        public static final String POST_NOT_FOUND = "Post not found.";
+        public static final String NOT_MINE_POST = "This is not ur post.";
+        public static final String INVALID_PAGE_LIMIT = "Page limit must not be less than one.";
+        public static final String DELETE_POST_SUCCESSFULLY = "Deleted post successfully.";
+        public static final String COMMENT_SUCCESSFULLY = "Comment on a post successfully.";
+        public static final String SEND_REQUEST_TO_YOURSELF = "What is wrong with u? U can't send a friend request for urself.";
+        public static final String ALREADY_SEND_REQUEST = "U have already sent a friend request.";
     }
 }
