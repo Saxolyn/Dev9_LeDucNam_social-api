@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -100,6 +99,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = NullPointerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @Hidden
     public Response handleNullPointerException(NullPointerException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 ex.getMessage(), null, ex.getClass()
@@ -135,6 +135,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @Hidden
     public Response handleGeneralExceptions(Exception ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 ex.getMessage(), null, ex.getClass()
@@ -143,6 +144,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @Hidden
     public Response handleRuntimeExceptions(RuntimeException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 ex.getMessage(), null, ex.getClass()
