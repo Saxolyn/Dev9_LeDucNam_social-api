@@ -13,6 +13,7 @@ import com.social.socialserviceapp.repository.ReactRepository;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.ReactService;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,19 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class ReactServiceImpl implements ReactService {
 
-    @Autowired
-    private ReactRepository reactRepository;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
+    private final ReactRepository reactRepository;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Override
-    public Response likeOrUnlikeAPost(Long postId){
+    public Response likeOrUnlikeAPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
         String username = SecurityContextHolder.getContext()
@@ -57,7 +54,7 @@ public class ReactServiceImpl implements ReactService {
     }
 
     @Override
-    public Response likeOrUnlikeAComment(Long commentId){
+    public Response likeOrUnlikeAComment(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Comment not found."));
         String username = SecurityContextHolder.getContext()

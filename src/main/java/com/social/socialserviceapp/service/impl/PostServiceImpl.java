@@ -15,6 +15,7 @@ import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.PostService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -35,19 +36,17 @@ import static com.social.socialserviceapp.util.FileUploadUtil.handleImageUpload;
 @Transactional
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    @Autowired
-    private PostMapper postMapper;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private UserRepository userRepository;
+
+    private final PostMapper postMapper;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles){
+    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles) {
         Post post = null;
         if (id == null) {
             post = new Post();
@@ -91,7 +90,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showMyPosts(int offset, int limit){
+    public Response showMyPosts(int offset, int limit) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -111,7 +110,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response deleteAPost(Long postId){
+    public Response deleteAPost(Long postId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -127,7 +126,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showOtherPost(Long userId, int offset, int limit){
+    public Response showOtherPost(Long userId, int offset, int limit) {
         if (limit == 0) {
             throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
         }
@@ -146,7 +145,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showAllPosts(int offset, int limit){
+    public Response showAllPosts(int offset, int limit) {
         if (limit == 0) {
             throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
         }

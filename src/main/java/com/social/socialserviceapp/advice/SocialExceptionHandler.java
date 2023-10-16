@@ -4,6 +4,7 @@ import com.social.socialserviceapp.exception.*;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.result.ValidationError;
 import com.social.socialserviceapp.util.Constants;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -115,7 +116,6 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
     public Response processValidationError(MethodArgumentNotValidException ex, WebRequest request){
         List<ValidationError> errors = ex.getBindingResult()
                 .getAllErrors()
@@ -129,7 +129,7 @@ public class SocialExceptionHandler {
                 })
                 .collect(Collectors.toList());
         return new Response(Constants.RESPONSE_TYPE.WARNING, HttpServletResponse.SC_BAD_REQUEST,
-                "Validation error. Check 'errors' field for details.", errors, ex.getClass()
+                "Validation error. Check 'errors' for details.", errors, ex.getClass()
                 .getName(), resolvePathFromWebRequest(request));
     }
 

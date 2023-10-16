@@ -11,7 +11,10 @@ import com.social.socialserviceapp.repository.UserRepository;
 import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.ProfileService;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,26 +33,22 @@ import static com.social.socialserviceapp.util.FileUploadUtil.handleImageUpload;
 @Transactional
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProfileServiceImpl implements ProfileService {
 
-    @Autowired
-    private ProfileRepository profileRepository;
-
-    @Autowired
-    private ProfileMapper profileMapper;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+    private final ProfileMapper profileMapper;
+    private final UserRepository userRepository;
 
     @Override
-    public Response updateInformation(UpdateInformationRequestDTO requestDTO){
+    public Response updateInformation(UpdateInformationRequestDTO requestDTO) {
         Profile profile = profileMapper.convertRequestDTOToProfile(requestDTO);
         profileRepository.save(profile);
         return Response.success("Updated information successfully");
     }
 
     @Override
-    public ResponseEntity<?> showAvatar(){
+    public ResponseEntity<?> showAvatar() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -58,10 +57,11 @@ public class ProfileServiceImpl implements ProfileService {
             throw new NotFoundException(Constants.RESPONSE_MESSAGE.PROFILE_NOT_FOUND);
         } else {
             try {
-                Path folder = Paths.get("src/main/resources/file_upload/", profile.getAvatar());
+                Path path = Paths.get("src/main/resources/file_upload/", profile.getAvatar());
+                String mimeType = Files.probeContentType(path);
                 return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_PNG)
-                        .body(Files.readAllBytes(folder));
+                        .contentType(MediaType.parseMediaType(mimeType))
+                        .body(Files.readAllBytes(path));
             } catch (Exception ex) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +71,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response showMyInfo(){
+    public Response showMyInfo() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -86,7 +86,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response showOtherInfo(Long userId){
+    public Response showOtherInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
         Profile profile = profileRepository.findProfileByLastModifiedBy(user.getUsername());
@@ -100,7 +100,7 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public Response uploadAvatar(MultipartFile multipartFile) throws IOException{
+    public Response uploadAvatar(MultipartFile multipartFile) throws IOException {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();

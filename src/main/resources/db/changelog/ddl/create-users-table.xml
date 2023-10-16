@@ -28,4 +28,7 @@
     <changeSet id="20231004_rename_column" author="kyrios">
         <renameColumn tableName="users" oldColumnName="active" newColumnName="is_active" columnDataType="TINYINT"/>
     </changeSet>
+    <changeSet id="20231016_remove_column" author="kyrios">
+        <dropColumn tableName="users" columnName="is_active"/>
+    </changeSet>
 </databaseChangeLog>

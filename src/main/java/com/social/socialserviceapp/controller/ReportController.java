@@ -3,6 +3,7 @@ package com.social.socialserviceapp.controller;
 import com.social.socialserviceapp.service.ReportService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,10 @@ import java.io.IOException;
 @RequestMapping("/api/v1/report")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Report", description = "The Report API. Nothing more!!!.")
+@RequiredArgsConstructor
 public class ReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
 
     @GetMapping("/")
     public ResponseEntity<ByteArrayResource> exportExcel() throws IOException {

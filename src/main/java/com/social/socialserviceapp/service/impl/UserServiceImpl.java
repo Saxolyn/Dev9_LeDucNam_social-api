@@ -19,6 +19,7 @@ import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.UserService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,30 +33,19 @@ import java.util.Optional;
 
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private UserRepository userRepository;
-    private UserMapper userMapper;
-    private PasswordEncoder passwordEncoder;
-    private RoleRepository roleRepository;
-    private UserDetailsService userDetailsService;
-    private PasswordResetTokenRepository passwordResetTokenRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final UserDetailsService userDetailsService;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     @Value("${token.password.reset.duration}")
     private Long expiration;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder,
-                           RoleRepository roleRepository, UserDetailsService userDetailsService,
-                           PasswordResetTokenRepository passwordResetTokenRepository){
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.roleRepository = roleRepository;
-        this.userDetailsService = userDetailsService;
-        this.passwordResetTokenRepository = passwordResetTokenRepository;
-    }
-
     @Override
-    public Response register(UserRequestDTO requestDTO){
+    public Response register(UserRequestDTO requestDTO) {
         User user = userMapper.convertRequestDTOToUser(requestDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = roleRepository.findByRoleName(RoleName.ROLE_USER)
@@ -69,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response forgotPassword(ForgotPasswordRequestDTO requestDTO){
+    public Response forgotPassword(ForgotPasswordRequestDTO requestDTO) {
         CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(
                 requestDTO.getUsername());
         PasswordResetToken passwordResetToken = null;
@@ -87,14 +77,14 @@ public class UserServiceImpl implements UserService {
                         .build());
     }
 
-    public PasswordResetToken createToken(Long userId){
+    public PasswordResetToken createToken(Long userId) {
         passwordResetTokenRepository.deleteByUserId(userId);
         PasswordResetToken token = createPasswordResetForPassword(userId);
         return passwordResetTokenRepository.save(token);
     }
 
     @Override
-    public Response resetPassword(String token, ResetPasswordRequestDTO requestDTO){
+    public Response resetPassword(String token, ResetPasswordRequestDTO requestDTO) {
         PasswordResetToken passwordResetToken = validPasswordResetToken(token);
         try {
             Optional<User> user = userRepository.findById(passwordResetToken.getUserId());
@@ -111,11 +101,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findUserByUsername(String username){
+    public Optional<User> findUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
-    public PasswordResetToken createPasswordResetForPassword(Long userId){
+    public PasswordResetToken createPasswordResetForPassword(Long userId) {
         String tokenID = CommonUtil.generateRandomUuid();
         PasswordResetToken token = new PasswordResetToken();
         token.setToken(tokenID);
@@ -126,7 +116,7 @@ public class UserServiceImpl implements UserService {
         return token;
     }
 
-    public PasswordResetToken validPasswordResetToken(String token){
+    public PasswordResetToken validPasswordResetToken(String token) {
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByTokenAndClaimed(token, false);
         if (passwordResetToken == null) {
             throw new InvalidTokenRequestException("Password Reset Token", token, "Invalid password reset token");
@@ -140,7 +130,7 @@ public class UserServiceImpl implements UserService {
         return passwordResetToken;
     }
 
-    public void setExpiration(Long expiration){
+    public void setExpiration(Long expiration) {
         this.expiration = expiration;
     }
 }

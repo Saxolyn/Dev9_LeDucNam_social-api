@@ -34,6 +34,4 @@ public class Profile extends BaseEntity {
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "user_id")
-    private Long userId;
 }

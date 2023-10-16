@@ -14,6 +14,7 @@ import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.CommentService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,19 +26,15 @@ import java.util.List;
 @Transactional
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
+    private final PostRepository postRepository;
+    private final CommentMapper commentMapper;
 
     @Override
-    public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO){
+    public Response createACommentForPosts(Long postId, CommentRequestDTO requestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
         Comment comment = getComment(requestDTO, post);
@@ -45,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
         return Response.success(Constants.RESPONSE_MESSAGE.COMMENT_SUCCESSFULLY);
     }
 
-    private Comment getComment(CommentRequestDTO requestDTO, Post post){
+    private Comment getComment(CommentRequestDTO requestDTO, Post post) {
         Comment comment = new Comment();
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -65,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Response showComments(Long postId){
+    public Response showComments(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.POST_NOT_FOUND));
         if (PostStatus.PUBLIC.equals(post.getStatus())) {
@@ -84,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Response deleteComment(Long commentId){
+    public Response deleteComment(Long commentId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -99,7 +96,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Response updateComment(Long commentId, CommentRequestDTO requestDTO){
+    public Response updateComment(Long commentId, CommentRequestDTO requestDTO) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();

@@ -8,6 +8,7 @@ import com.social.socialserviceapp.repository.ReactRepository;
 import com.social.socialserviceapp.service.PostService;
 import com.social.socialserviceapp.service.ReportService;
 import com.social.socialserviceapp.util.CommonUtil;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -20,26 +21,22 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Transactional
 @Service
+@RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService {
 
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private FriendRepository friendRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @Autowired
-    private ReactRepository reactRepository;
+    private final PostRepository postRepository;
+    private final FriendRepository friendRepository;
+    private final CommentRepository commentRepository;
+    private final ReactRepository reactRepository;
 
     @Override
     public ResponseEntity<ByteArrayResource> exportExcel() throws IOException {

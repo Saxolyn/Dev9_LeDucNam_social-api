@@ -17,6 +17,7 @@ import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.FriendService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,23 +28,16 @@ import java.util.List;
 
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService {
 
-    @Autowired
-    private FriendRepository friendRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
-    private FriendMapper friendMapper;
+    private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+    private final FriendMapper friendMapper;
 
-    /**
-     * @param userId
-     * @return
-     */
     @Override
-    public Response sendARequest(Long userId){
+    public Response sendARequest(Long userId) {
         validate(userId);
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -79,7 +73,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response friendRequests(){
+    public Response friendRequests() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -96,7 +90,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response searchFriend(String realName){
+    public Response searchFriend(String realName) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -109,7 +103,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response cancelARequest(Long userId){
+    public Response cancelARequest(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -133,7 +127,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response sendRequests(){
+    public Response sendRequests() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -149,7 +143,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response acceptARequest(Long userId){
+    public Response acceptARequest(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -171,7 +165,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response showMyFriends(){
+    public Response showMyFriends() {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -189,7 +183,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public Response unFriend(Long userId){
+    public Response unFriend(Long userId) {
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -210,7 +204,7 @@ public class FriendServiceImpl implements FriendService {
         }
     }
 
-    private boolean validate(Long userId){
+    private boolean validate(Long userId) {
         if (userRepository.existsUserById(userId)) {
             return true;
         } else {

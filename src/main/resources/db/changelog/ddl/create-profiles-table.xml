@@ -3,7 +3,6 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
-
     <changeSet id="20231003_create_profiles_table" author="kyrios">
         <createTable tableName="profiles">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -20,5 +19,8 @@
             <column name="last_modified_date" type="DATETIME"/>
             <column name="user_id" type="BIGINT"/>
         </createTable>
+    </changeSet>
+    <changeSet id="20231016_remove_column" author="kyrios">
+        <dropColumn tableName="profiles" columnName="user_id"/>
     </changeSet>
 </databaseChangeLog>

@@ -8,6 +8,7 @@ import com.social.socialserviceapp.validation.annotation.FileType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,10 @@ import java.io.IOException;
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Profile", description = "The Profile API. Nothing more!!!.")
 @Validated
+@RequiredArgsConstructor
 public class ProfileController {
 
-    @Autowired
-    private ProfileService profileService;
+    private final ProfileService profileService;
 
     @PostMapping(value = "/")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
