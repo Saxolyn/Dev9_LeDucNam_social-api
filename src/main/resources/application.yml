@@ -46,3 +46,6 @@ token:
 server:
   error:
     include-stacktrace: never
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha

@@ -16,20 +16,22 @@ import javax.validation.constraints.Email;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(example = "{\n" +
+        "  \"username\": \"kyrios\",\n" +
+        "  \"email\": \"ur_mail@gmail.com\",\n" +
+        "  \"password\": \"aduchat123!@#\"\n" +
+        "}",type = "object")
 public class UserRequestDTO {
 
-    @Schema(example = "kyrios", type = "string")
     @NullOrBlank(message = "[username] must not be null or blank")
     @UsernameExists
     private String username;
 
-    @Schema(example = "ur_mail@gmail.com", type = "string")
     @NullOrBlank(message = "[email] must not be null or blank")
-    @Email()
+    @Email
     @EmailExists
     private String email;
 
-    @Schema(example = "aduchat123!@#", type = "string")
     @NullOrBlank(message = "[password] must not be null or blank")
     @StrongPassword
     private String password;

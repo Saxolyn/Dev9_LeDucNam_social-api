@@ -59,7 +59,7 @@ class PostServiceTest {
     private UserRepository userRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         User user = new User();
         user.setUsername("aduchat");
         Authentication auth = new UsernamePasswordAuthenticationToken(user.getUsername(), null);
@@ -68,11 +68,11 @@ class PostServiceTest {
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
     }
 
     @Test
-    void createOrEditAPost(){
+    void createOrEditAPost() {
         Long id = null;
         String content = "Sample content";
         MultipartFile[] multipartFiles = null;
@@ -86,7 +86,7 @@ class PostServiceTest {
     }
 
     @Test
-    void createOrEditAPost_ifContentAndFileNull(){
+    void createOrEditAPost_ifContentAndFileNull() {
         try {
             Long id = null;
             MultipartFile[] multipartFiles = null;
@@ -101,7 +101,7 @@ class PostServiceTest {
     }
 
     @Test
-    void createOrEditAPost_ifIdPostNotNullAndPostNotFound(){
+    void createOrEditAPost_ifIdPostNotNullAndPostNotFound() {
         try {
             Long id = 22L;
             MultipartFile[] multipartFiles = null;
@@ -115,7 +115,7 @@ class PostServiceTest {
     }
 
     @Test
-    void createOrEditAPost_editOtherPostNotMine(){
+    void createOrEditAPost_editOtherPostNotMine() {
         try {
             Long id = 22L;
             MultipartFile[] multipartFiles = null;
@@ -132,8 +132,8 @@ class PostServiceTest {
     }
 
     @Test
-    void createOrEditAPost_ifFileNotNull() throws IOException{
-        Long id = null;
+    void createOrEditAPost_ifFileNotNull() throws IOException {
+        Long id = 22L;
         String content = "Sample content";
         MultipartFile[] multipartFiles = {
                 new MockMultipartFile("image1", "image1.jpg", "image/jpeg", "image1 data".getBytes()),};
@@ -144,14 +144,16 @@ class PostServiceTest {
         PostStatus status = PostStatus.PUBLIC;
         Post post = new Post();
         post.setContent(content);
+        post.setCreatedBy("aduchat");
         post.setStatus(status);
+        when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
         when(postRepository.save(any())).thenReturn(post);
         Response response = postService.createOrEditAPost(status, id, content, multipartFiles);
         assertEquals("Updated post successfully.", response.getMessage());
     }
 
     @Test
-    void showMyPosts(){
+    void showMyPosts() {
         int offset = 0;
         int limit = 5;
         List<Post> posts = Arrays.asList(new Post(), new Post());
@@ -165,7 +167,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showMyPosts_ifLimitEqual0(){
+    void showMyPosts_ifLimitEqual0() {
         try {
             int offset = 0;
             int limit = 0;
@@ -176,7 +178,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showMyPosts_whenUserHasNoPost(){
+    void showMyPosts_whenUserHasNoPost() {
         int offset = 0;
         int limit = 5;
         when(postRepository.findAllByCreatedBy(anyString(), any())).thenReturn(new PageImpl<>(new ArrayList<>()));
@@ -185,7 +187,7 @@ class PostServiceTest {
     }
 
     @Test
-    void deleteAPost_ifPostNotFound(){
+    void deleteAPost_ifPostNotFound() {
         try {
             when(postRepository.findById(anyLong())).thenThrow(NotFoundException.class);
             postService.deleteAPost(22L);
@@ -195,7 +197,7 @@ class PostServiceTest {
     }
 
     @Test
-    void deleteAPost(){
+    void deleteAPost() {
         Post post = new Post();
         post.setCreatedBy("aduchat");
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
@@ -204,7 +206,7 @@ class PostServiceTest {
     }
 
     @Test
-    void deleteAPost_ifNotMinePost(){
+    void deleteAPost_ifNotMinePost() {
         Post post = new Post();
         post.setCreatedBy("vcl");
         when(postRepository.findById(anyLong())).thenReturn(Optional.of(post));
@@ -214,7 +216,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showOtherPost(){
+    void showOtherPost() {
         int offset = 0;
         int limit = 5;
         List<Post> posts = Arrays.asList(new Post(), new Post());
@@ -231,7 +233,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showOtherPost_ifLimitEqual0(){
+    void showOtherPost_ifLimitEqual0() {
         try {
             int offset = 0;
             int limit = 0;
@@ -242,7 +244,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showOtherPost_whenUserHasNoPost(){
+    void showOtherPost_whenUserHasNoPost() {
         int offset = 0;
         int limit = 5;
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder()
@@ -255,7 +257,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showAllPosts(){
+    void showAllPosts() {
         int offset = 0;
         int limit = 5;
         List<Post> posts = Arrays.asList(new Post(), new Post());
@@ -274,7 +276,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showAllPosts_ifLimitEqual0(){
+    void showAllPosts_ifLimitEqual0() {
         try {
 
             int offset = 0;
@@ -287,7 +289,7 @@ class PostServiceTest {
     }
 
     @Test
-    void showAllPosts_whenUserHasNoPost(){
+    void showAllPosts_whenUserHasNoPost() {
         int offset = 0;
         int limit = 5;
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(User.builder()

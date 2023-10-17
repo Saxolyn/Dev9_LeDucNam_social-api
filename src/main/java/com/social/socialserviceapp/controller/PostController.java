@@ -6,6 +6,7 @@ import com.social.socialserviceapp.result.Response;
 import com.social.socialserviceapp.service.CommentService;
 import com.social.socialserviceapp.service.PostService;
 import com.social.socialserviceapp.service.ReactService;
+import com.social.socialserviceapp.util.Constants;
 import com.social.socialserviceapp.validation.annotation.MultipleFileSize;
 import com.social.socialserviceapp.validation.annotation.MultipleFileType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,9 +29,14 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/post")
 @SecurityRequirement(name = "bearerAuth")
-@Tag(name = "Post", description = "The Post API. Nothing more!!!.")
+@Tag(name = "3. Post", description = "The Post API. Nothing more!!!.")
 @Validated
 @RequiredArgsConstructor
+@ApiResponses(value = {@ApiResponse(responseCode = "200",
+        content = {@Content(mediaType = "application/json",
+                schema = @Schema(example = Constants.RESPONSE_SCHEMA.OK))}), @ApiResponse(responseCode = "400",
+        content = {@Content(mediaType = "application/json",
+                schema = @Schema(example = Constants.RESPONSE_SCHEMA.BAD_REQUEST))})})
 public class PostController {
 
     private final PostService postService;
@@ -42,10 +48,6 @@ public class PostController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @Operation(summary = "Create a new post.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200",
-            description = "Found the book",
-            content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))}),
-            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content)})
     public Response createAPost(@RequestPart(value = "content", required = false) String content,
                                 @RequestPart(value = "image",
                                         required = false) @Valid @MultipleFileSize @MultipleFileType MultipartFile[] multipartFiles) {

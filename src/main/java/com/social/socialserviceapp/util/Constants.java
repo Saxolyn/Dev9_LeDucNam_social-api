@@ -40,4 +40,30 @@ public class Constants {
         public static final String SEND_REQUEST_TO_YOURSELF = "What is wrong with u? U can't send a friend request for urself.";
         public static final String ALREADY_SEND_REQUEST = "U have already sent a friend request.";
     }
+
+    public static class RESPONSE_SCHEMA {
+        public static final String OK = "{\n" +
+                "  \"timestamp\": \"string\",\n" +
+                "  \"type\": \"string\",\n" +
+                "  \"status\": 200,\n" +
+                "  \"message\": \"string\",\n" +
+                "  \"data\": {}\n" +
+                "}";
+        public static final String BAD_REQUEST = "{\n" +
+                "  \"timestamp\": \"string\",\n" +
+                "  \"type\": \"string\",\n" +
+                "  \"status\": 400,\n" +
+                "  \"message\": \"string\",\n" +
+                "  \"errors\": [\n" +
+                "    {\n" +
+                "      \"field\": \"string\",\n" +
+                "      \"object\": {},\n" +
+                "      \"message\": \"string\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"cause\": \"string\",\n" +
+                "  \"path\": \"string\"\n" +
+                "}";
+    }
+
 }

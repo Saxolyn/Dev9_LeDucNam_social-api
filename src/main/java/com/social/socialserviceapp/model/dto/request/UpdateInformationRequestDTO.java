@@ -1,5 +1,6 @@
 package com.social.socialserviceapp.model.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,16 +12,18 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-//@ToString(exclude = "file")
+@Schema(example = "{\n" +
+        "  \"realName\": \"Le Duc Nam\",\n" +
+        "  \"birthDate\": \"2002-07-4\",\n" +
+        "  \"occupation\": \"Ban ma tuy\",\n" +
+        "  \"livePlace\": \"Trung Quoc\"\n" +
+        "}",type = "object")
 public class UpdateInformationRequestDTO {
 
     private String realName;
-    @Pattern(regexp = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$", message = "aduchat")
+    @Pattern(regexp = "^\\d{4}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$", message = "[birthDate] invalid date format.")
     private String birthDate;
     private String occupation;
     private String livePlace;
-
-//    @RequestPart(value = "")
-//    private MultipartFile file;
 
 }

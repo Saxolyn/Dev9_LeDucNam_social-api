@@ -13,4 +13,5 @@ public class VerifyRequestDTO {
 
     private String username;
     private String otp;
+
 }

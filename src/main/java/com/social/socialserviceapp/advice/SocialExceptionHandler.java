@@ -35,6 +35,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = InvalidTokenRequestException.class)
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @Hidden
     public Response handleInvalidTokenRequestException(InvalidTokenRequestException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_ACCEPTABLE, ex.getMessage(), null,
                 ex.getClass()
@@ -51,6 +52,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = InvalidOtpException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @Hidden
     public Response handleInvalidOtpException(InvalidOtpException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage(), null,
                 ex.getClass()
@@ -59,6 +61,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = ExpiredOtpException.class)
     @ResponseStatus(HttpStatus.GONE)
+    @Hidden
     public Response handleExpiredOtpException(ExpiredOtpException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_GONE, ex.getMessage(), null,
                 ex.getClass()
@@ -67,6 +70,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    @Hidden
     public Response handleNotFoundException(NotFoundException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
                 ex.getClass()
@@ -108,6 +112,7 @@ public class SocialExceptionHandler {
 
     @ExceptionHandler(value = UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    @Hidden
     public Response handleUserNotFoundException(UsernameNotFoundException ex, WebRequest request){
         return new Response(Constants.RESPONSE_TYPE.ERROR, HttpServletResponse.SC_NOT_FOUND, ex.getMessage(), null,
                 ex.getClass()
@@ -129,7 +134,7 @@ public class SocialExceptionHandler {
                 })
                 .collect(Collectors.toList());
         return new Response(Constants.RESPONSE_TYPE.WARNING, HttpServletResponse.SC_BAD_REQUEST,
-                "Validation error. Check 'errors' for details.", errors, ex.getClass()
+                "Validation error. Check 'errors' field for details.", errors, ex.getClass()
                 .getName(), resolvePathFromWebRequest(request));
     }
 
