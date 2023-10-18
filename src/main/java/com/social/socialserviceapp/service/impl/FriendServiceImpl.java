@@ -18,7 +18,6 @@ import com.social.socialserviceapp.service.FriendService;
 import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
