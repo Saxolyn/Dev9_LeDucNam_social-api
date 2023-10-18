@@ -1,13 +1,14 @@
 package com.social.socialserviceapp.repository;
 
 import com.social.socialserviceapp.model.entities.Post;
-import com.social.socialserviceapp.model.enums.FriendStatus;
 import com.social.socialserviceapp.model.enums.PostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -16,15 +17,21 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByCreatedByAndStatus(String createdBy, PostStatus status, Pageable pageable);
 
-    @Query(value = "SELECT DISTINCT " +
-            "p " +
-            "FROM Post p " +
-            "LEFT JOIN User u ON u.username = p.createdBy " +
-            "LEFT JOIN Friend f ON f.baseUserId = u.id " +
-            "LEFT JOIN React r ON r.postId = p.id " +
-            "LEFT JOIN Comment c ON c.postId = p.id " +
-            "WHERE f.baseUserId = ?1 AND f.status = ?2")
-    Page<Post> getAllFriendPostsByUserIdAndFriendStatus(Long baseUserId, FriendStatus status, Pageable pageable);
+    @Query(value = "SELECT * " +
+            "FROM " +
+            "(SELECT * " +
+            "FROM posts p " +
+            "WHERE p.created_by = ?1 " +
+            "UNION " +
+            "SELECT p.id,p.content,p.images,p.status,p.created_by,p.created_date,p.last_modified_by,p.last_modified_date FROM friends f " +
+            "LEFT JOIN posts p ON p.created_by = f.last_modified_by " +
+            "WHERE f.created_by = ?1 and f.status = ?2 " +
+            "UNION " +
+            "SELECT p.id,p.content,p.images,p.status,p.created_by,p.created_date,p.last_modified_by,p.last_modified_date FROM friends f " +
+            "LEFT JOIN posts p ON p.created_by = p.created_by " +
+            "WHERE f.last_modified_by = ?1 and f.status = ?2 " +
+            " ) results ORDER BY created_date DESC LIMIT ?3 OFFSET ?4", nativeQuery = true)
+    List<Post> getAllFriendPostsByUsernameAndFriendStatus(String username, int status, int limit, int offset);
 
     @Query(value = "SELECT COUNT(*) " +
             "FROM posts p " +

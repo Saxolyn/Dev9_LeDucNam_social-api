@@ -17,7 +17,6 @@ import com.social.socialserviceapp.util.CommonUtil;
 import com.social.socialserviceapp.util.Constants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -46,7 +45,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
 
     @Override
-    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles) {
+    public Response createOrEditAPost(PostStatus status, Long id, String content, MultipartFile[] multipartFiles){
         Post post = null;
         if (id == null) {
             post = new Post();
@@ -90,7 +89,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showMyPosts(int offset, int limit) {
+    public Response showMyPosts(int offset, int limit){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -110,7 +109,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response deleteAPost(Long postId) {
+    public Response deleteAPost(Long postId){
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getName();
@@ -126,7 +125,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showOtherPost(Long userId, int offset, int limit) {
+    public Response showOtherPost(Long userId, int offset, int limit){
         if (limit == 0) {
             throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
         }
@@ -145,7 +144,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Response showAllPosts(int offset, int limit) {
+    public Response showAllPosts(int offset, int limit){
         if (limit == 0) {
             throw new IllegalArgumentException(Constants.RESPONSE_MESSAGE.INVALID_PAGE_LIMIT);
         }
@@ -154,11 +153,10 @@ public class PostServiceImpl implements PostService {
                 .getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException(Constants.RESPONSE_MESSAGE.USER_NOT_FOUND));
-        Pageable pageable = PageRequest.of(offset, limit, Sort.by("createdDate")
-                .descending());
-        List<Post> posts = postRepository.getAllFriendPostsByUserIdAndFriendStatus(user.getId(), FriendStatus.ACCEPTED,
-                        pageable)
-                .getContent();
+//        Pageable pageable = PageRequest.of(offset, limit, Sort.by("created_date")
+//                .descending());
+        List<Post> posts = postRepository.getAllFriendPostsByUsernameAndFriendStatus(user.getUsername(),
+                        FriendStatus.ACCEPTED.ordinal(), limit, offset);
         if (!CommonUtil.isNullOrEmpty(posts)) {
             return Response.success("Show all friend posts.")
                     .withData(postMapper.convertPostToShowMyPostResponseDTO(posts));

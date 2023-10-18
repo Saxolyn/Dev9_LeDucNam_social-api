@@ -22,11 +22,15 @@ import javax.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "1. Auth", description = "The Auth API. Nothing more!!!.")
 @RequiredArgsConstructor
-@ApiResponses(value = {@ApiResponse(responseCode = "200",
-        content = {@Content(mediaType = "application/json", schema = @Schema(example = Constants.RESPONSE_SCHEMA.OK))}),
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200",
+                content = {
+                        @Content(mediaType = "application/json",
+                                schema = @Schema(example = Constants.RESPONSE_SCHEMA.OK))}),
         @ApiResponse(responseCode = "400",
-                content = {@Content(mediaType = "application/json",
-                        schema = @Schema(example = Constants.RESPONSE_SCHEMA.BAD_REQUEST))})})
+                content = {
+                        @Content(mediaType = "application/json",
+                                schema = @Schema(example = Constants.RESPONSE_SCHEMA.BAD_REQUEST))})})
 public class AuthController {
 
     private final UserService userService;
@@ -34,32 +38,32 @@ public class AuthController {
 
     @PostMapping("/signup")
     @Operation(summary = "Sign up for a new user account.")
-    public Response register(@Valid @RequestBody UserRequestDTO requestDTO) {
+    public Response register(@Valid @RequestBody UserRequestDTO requestDTO){
         return userService.register(requestDTO);
     }
 
     @PostMapping("/sign-in")
     @Operation(summary = "Send an OTP to the response after the user logs in.")
-    public Response login(@RequestBody LoginRequestDTO requestDTO) {
+    public Response login(@RequestBody LoginRequestDTO requestDTO){
         return otpService.sendOTP(requestDTO);
     }
 
     @PostMapping("/verify-otp")
     @Operation(summary = "Verify the OTP after the user provides it.")
-    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO) {
+    public Response sendOtp(@RequestBody VerifyRequestDTO requestDTO){
         return otpService.verifyOtp(requestDTO);
     }
 
     @PostMapping("/forgot-password")
     @Operation(summary = "Send a reset password token to the user.")
-    public Response forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO requestDTO) {
+    public Response forgotPassword(@Valid @RequestBody ForgotPasswordRequestDTO requestDTO){
         return userService.forgotPassword(requestDTO);
     }
 
     @PutMapping("/reset-password/{token}")
     @Operation(summary = "Reset password with a token, when the user loses their memory.")
     public Response resetPassword(@PathVariable String token,
-                                  @Valid @RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO) {
+                                  @Valid @RequestBody ResetPasswordRequestDTO resetPasswordRequestDTO){
         return userService.resetPassword(token, resetPasswordRequestDTO);
     }
 
